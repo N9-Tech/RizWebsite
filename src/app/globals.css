@@ -79,3 +79,136 @@ main{position:relative;z-index:2}.section-label{display:flex;align-items:center;
 @media(max-width:1023px){.hero-orbit-label{right:10px;opacity:.65}.pointer-glow{display:none}}
 @media(max-width:767px){.hero-orbit-label{display:none}.scene-atmosphere{inset:-30%;transform-origin:50% 68%}.scene-vignette{background:linear-gradient(180deg,rgba(5,6,7,.26),transparent 22% 64%,rgba(5,6,7,.66)),radial-gradient(circle at 58% 68%,transparent 0 19%,rgba(5,6,7,.3) 70%)}.capabilities{background:linear-gradient(180deg,rgba(5,6,7,.5),rgba(5,6,7,.92) 13%,#050607 48%)}}
 @media(prefers-reduced-motion:reduce){.scene-atmosphere,.scroll-line:after{animation:none}.pointer-glow,.page-progress{display:none}.hero-line{overflow:visible}.hero-line>span{opacity:1!important;transform:none!important}.project-visual{clip-path:none!important}}
+
+/* Premium depth pass — continuous cinematic environment */
+.scene-canvas{
+  opacity:1;
+  background:
+    radial-gradient(ellipse at 70% 42%,rgba(55,95,81,.08) 0%,rgba(17,27,24,.035) 25%,transparent 52%),
+    linear-gradient(180deg,#050607 0%,#060708 46%,#040506 100%);
+}
+.scene-canvas:after{
+  background:
+    linear-gradient(90deg,rgba(5,6,7,.44) 0%,rgba(5,6,7,.13) 34%,rgba(5,6,7,.02) 58%,rgba(5,6,7,.12) 100%),
+    linear-gradient(180deg,rgba(5,6,7,.06),transparent 22% 72%,rgba(5,6,7,.28));
+}
+.scene-atmosphere{
+  inset:-20%;
+  opacity:.72;
+  background:
+    radial-gradient(ellipse at 69% 43%,rgba(125,197,169,.055),transparent 21%),
+    radial-gradient(ellipse at 75% 52%,rgba(46,92,76,.06),transparent 34%);
+  filter:blur(44px);
+  animation:premiumAtmosphere 22s ease-in-out infinite alternate;
+}
+.scene-depth-haze{
+  position:absolute;
+  pointer-events:none;
+  border-radius:50%;
+  mix-blend-mode:screen;
+  will-change:transform,opacity;
+}
+.scene-depth-haze-a{
+  width:54vw;
+  height:38vw;
+  min-width:520px;
+  min-height:360px;
+  right:-8vw;
+  top:10vh;
+  opacity:.22;
+  filter:blur(70px);
+  background:radial-gradient(ellipse,rgba(99,173,143,.13),rgba(55,105,85,.035) 40%,transparent 72%);
+  animation:depthHazeA 18s cubic-bezier(.45,0,.55,1) infinite alternate;
+}
+.scene-depth-haze-b{
+  width:42vw;
+  height:28vw;
+  min-width:440px;
+  min-height:300px;
+  right:18vw;
+  bottom:4vh;
+  opacity:.14;
+  filter:blur(90px);
+  background:radial-gradient(ellipse,rgba(116,145,151,.11),rgba(55,75,79,.025) 44%,transparent 72%);
+  animation:depthHazeB 24s cubic-bezier(.45,0,.55,1) infinite alternate;
+}
+.scene-lens{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 72% 44%,transparent 0 12%,rgba(178,255,222,.012) 24%,transparent 38%),
+    linear-gradient(115deg,transparent 42%,rgba(255,255,255,.012) 49%,transparent 56%);
+  opacity:.8;
+  mix-blend-mode:screen;
+}
+.scene-vignette{
+  background:
+    radial-gradient(ellipse at 70% 44%,transparent 0 20%,rgba(5,6,7,.04) 42%,rgba(5,6,7,.38) 82%,rgba(3,4,5,.72) 100%),
+    linear-gradient(180deg,rgba(4,5,6,.12),transparent 18% 76%,rgba(4,5,6,.4));
+}
+.hero:before{
+  left:58%;
+  top:48%;
+  width:min(46vw,760px);
+  height:min(46vw,760px);
+  border:0;
+  box-shadow:none;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(128,209,176,.055) 0%,rgba(73,128,106,.025) 30%,transparent 68%);
+  filter:blur(28px);
+  opacity:.7;
+}
+.capabilities{
+  background:linear-gradient(180deg,rgba(5,6,7,.3) 0%,rgba(5,6,7,.64) 17%,rgba(5,6,7,.72) 100%);
+  backdrop-filter:blur(1px);
+}
+.work-section{
+  background:linear-gradient(180deg,rgba(6,7,8,.72),rgba(6,7,8,.79) 68%,rgba(6,7,8,.84));
+}
+.workflow{
+  background:linear-gradient(180deg,rgba(7,9,10,.80),rgba(5,6,7,.86));
+}
+.stack-section{
+  background:linear-gradient(180deg,rgba(5,6,7,.88),rgba(5,6,7,.95));
+}
+.scene-canvas.phase-open{filter:saturate(1.02) brightness(.98)}
+.scene-canvas.phase-inspect{filter:saturate(1.05) brightness(1.01)}
+.scene-canvas.phase-build{filter:saturate(1.03) brightness(.98)}
+.scene-canvas.phase-stack{opacity:.82;filter:saturate(.92) brightness(.82)}
+.scene-canvas.phase-resolve{opacity:.34;filter:saturate(.72) brightness(.66) blur(.35px)}
+
+@keyframes premiumAtmosphere{
+  from{transform:translate3d(-1.5%,-1%,0) scale(.98);opacity:.62}
+  to{transform:translate3d(2%,1.5%,0) scale(1.05);opacity:.84}
+}
+@keyframes depthHazeA{
+  from{transform:translate3d(-3%,1%,0) scale(.94);opacity:.15}
+  to{transform:translate3d(4%,-3%,0) scale(1.08);opacity:.25}
+}
+@keyframes depthHazeB{
+  from{transform:translate3d(3%,2%,0) scale(1.04);opacity:.09}
+  to{transform:translate3d(-4%,-2%,0) scale(.94);opacity:.17}
+}
+
+@media(max-width:1023px){
+  .scene-canvas{opacity:.9}
+  .scene-depth-haze-a{right:-28vw;top:18vh}
+  .scene-depth-haze-b{right:5vw;bottom:12vh}
+}
+@media(max-width:767px){
+  .scene-canvas{top:0;bottom:auto;height:100svh;opacity:.86}
+  .scene-canvas:after{
+    background:
+      linear-gradient(180deg,rgba(5,6,7,.22) 0%,rgba(5,6,7,.08) 25%,rgba(5,6,7,.1) 60%,rgba(5,6,7,.64) 100%),
+      linear-gradient(90deg,rgba(5,6,7,.34),transparent 62%);
+  }
+  .scene-atmosphere{inset:-22%;filter:blur(54px)}
+  .scene-depth-haze-a{width:110vw;height:75vw;right:-45vw;top:30vh;min-width:0;min-height:0}
+  .scene-depth-haze-b{width:95vw;height:70vw;right:4vw;bottom:2vh;min-width:0;min-height:0}
+  .hero:before{width:95vw;height:95vw;left:26%;top:63%;filter:blur(38px);opacity:.5}
+  .capabilities{background:linear-gradient(180deg,rgba(5,6,7,.62),rgba(5,6,7,.88) 28%,#050607 72%)}
+}
+@media(prefers-reduced-motion:reduce){
+  .scene-atmosphere,.scene-depth-haze-a,.scene-depth-haze-b{animation:none}
+}

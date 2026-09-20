@@ -1,6 +1,6 @@
 "use client";
 
-import { Edges, Line } from "@react-three/drei";
+import { Line } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
@@ -46,8 +46,8 @@ const auraFragment = `
     vec3 viewDir = normalize(cameraPosition - vWorld);
     float fresnel = pow(1.0 - max(dot(normalize(vNormalW), viewDir), 0.0), 2.2);
     float pulse = 0.82 + sin(uTime * 1.7) * 0.12;
-    float alpha = fresnel * (0.28 + uIntensity * 0.28) * pulse;
-    vec3 color = uColor * (0.75 + fresnel * 1.55) * (0.8 + uIntensity * 0.35);
+    float alpha = fresnel * (0.10 + uIntensity * 0.12) * pulse;
+    vec3 color = uColor * (0.44 + fresnel * 1.08) * (0.72 + uIntensity * 0.22);
     gl_FragColor = vec4(color, alpha);
   }
 `;
@@ -106,8 +106,7 @@ function ArchitecturalShell() {
       {struts.map((item, i) => (
         <mesh key={i} ref={(node) => { refs.current[i] = node; }} position={item.p} rotation={[0, 0, item.r]}>
           <boxGeometry args={item.s} />
-          <meshStandardMaterial color="#111716" metalness={.78} roughness={.42} />
-          <Edges color="#35443f" threshold={16} />
+          <meshPhysicalMaterial color="#0d1110" metalness={.72} roughness={.3} clearcoat={.72} clearcoatRoughness={.2} />
         </mesh>
       ))}
     </group>
@@ -135,7 +134,7 @@ function DataPanes() {
       paneB.current.position.y = -.72 + Math.sin(t * .37 + 1) * .038;
       paneB.current.rotation.y = .36 + opening * .08;
     }
-    const opacity = .065 + progress * .055;
+    const opacity = .038 + progress * .032;
     if (matA.current) matA.current.opacity = opacity;
     if (matB.current) matB.current.opacity = opacity * .9;
   });
@@ -144,18 +143,16 @@ function DataPanes() {
       <group ref={paneA} position={[1.55, .58, -.72]} rotation={[.04, -.3, .03]}>
         <mesh>
           <planeGeometry args={[1.45, .76]} />
-          <meshPhysicalMaterial ref={matA} color="#0a0f0e" transparent depthWrite={false} opacity={.065} roughness={.28} metalness={.34} side={THREE.DoubleSide} />
-          <Edges color="#33453f" />
+          <meshPhysicalMaterial ref={matA} color="#0a0f0e" transparent depthWrite={false} opacity={.04} roughness={.34} metalness={.38} side={THREE.DoubleSide} />
         </mesh>
-        {[.24, .08, -.08, -.24].map((y, i) => <mesh key={i} position={[-.2 + i * .04, y, .012]}><planeGeometry args={[.72 - i * .08, .014]} /><meshBasicMaterial color="#7d968c" transparent opacity={.15 + i * .025} /></mesh>)}
+        {[.24, .08, -.08, -.24].map((y, i) => <mesh key={i} position={[-.2 + i * .04, y, .012]}><planeGeometry args={[.72 - i * .08, .014]} /><meshBasicMaterial color="#7d968c" transparent opacity={.085 + i * .015} /></mesh>)}
       </group>
       <group ref={paneB} position={[-1.35, -.72, -.6]} rotation={[-.06, .36, -.06]}>
         <mesh>
           <planeGeometry args={[1.18, .62]} />
-          <meshPhysicalMaterial ref={matB} color="#090e0d" transparent depthWrite={false} opacity={.058} roughness={.3} metalness={.3} side={THREE.DoubleSide} />
-          <Edges color="#2f403a" />
+          <meshPhysicalMaterial ref={matB} color="#090e0d" transparent depthWrite={false} opacity={.035} roughness={.36} metalness={.34} side={THREE.DoubleSide} />
         </mesh>
-        {[-.34, 0, .34].map((x, i) => <mesh key={i} position={[x, .08 - i * .08, .012]}><circleGeometry args={[.045 + i * .008, 12]} /><meshBasicMaterial color={i === 1 ? "#dff3c9" : "#8edfc0"} transparent opacity={.38} /></mesh>)}
+        {[-.34, 0, .34].map((x, i) => <mesh key={i} position={[x, .08 - i * .08, .012]}><circleGeometry args={[.045 + i * .008, 12]} /><meshBasicMaterial color={i === 1 ? "#dff3c9" : "#8edfc0"} transparent opacity={.22} /></mesh>)}
       </group>
     </>
   );
@@ -215,7 +212,7 @@ export default function BuildEngine() {
     if (ringB.current) ringB.current.rotation.x = 1.08 + Math.sin(t * .18) * .08 + progress * .3;
     if (ringC.current) ringC.current.rotation.y = -.58 + t * .045 - progress * .42;
 
-    if (coreLight.current) coreLight.current.intensity = 1.6 + opening * 1.15;
+    if (coreLight.current) coreLight.current.intensity = 1.15 + opening * .75;
 
     auraMaterial.uniforms.uTime.value = t;
     auraMaterial.uniforms.uIntensity.value = opening + (activeCapability ? .35 : 0);
@@ -234,17 +231,16 @@ export default function BuildEngine() {
       <group>
         <mesh ref={inner}>
           <sphereGeometry args={[.31, quality === "high" ? 48 : 28, quality === "high" ? 48 : 28]} />
-          <meshPhysicalMaterial color="#dcebe5" emissive="#71b89e" emissiveIntensity={1.55} metalness={.22} roughness={.12} clearcoat={1} clearcoatRoughness={.12} toneMapped={false} />
+          <meshPhysicalMaterial color="#d7e1dd" emissive="#5f8f7d" emissiveIntensity={.9} metalness={.12} roughness={.08} clearcoat={1} clearcoatRoughness={.06} toneMapped={false} />
         </mesh>
         <mesh ref={core} scale={1.12}>
           <icosahedronGeometry args={[.76, quality === "high" ? 3 : 2]} />
-          <meshPhysicalMaterial color="#070a0a" transparent opacity={.84} metalness={.82} roughness={.16} clearcoat={1} clearcoatRoughness={.16} />
-          <Edges color="#6f887e" threshold={20} />
+          <meshPhysicalMaterial color="#080b0a" transparent opacity={.94} metalness={.68} roughness={.14} clearcoat={1} clearcoatRoughness={.08} />
         </mesh>
         <mesh scale={1.38} material={auraMaterial}>
           <icosahedronGeometry args={[.78, 3]} />
         </mesh>
-        <pointLight ref={coreLight} color="#86d1b4" intensity={1.6} distance={4.6} decay={2} />
+        <pointLight ref={coreLight} color="#86d1b4" intensity={1.15} distance={4.2} decay={2} />
       </group>
 
       <ArchitecturalShell />
@@ -252,15 +248,15 @@ export default function BuildEngine() {
       <group ref={orbitGroup}>
         <mesh ref={ringA} rotation={[Math.PI / 2, 0, .18]}>
           <torusGeometry args={[1.38, .012, 8, quality === "low" ? 64 : 128]} />
-          <meshBasicMaterial color="#80968d" transparent opacity={.19} depthWrite={false} />
+          <meshBasicMaterial color="#9eaaa5" transparent opacity={.095} depthWrite={false} />
         </mesh>
         <mesh ref={ringB} rotation={[1.08, .2, -.24]}>
           <torusGeometry args={[1.68, .008, 6, quality === "low" ? 64 : 128]} />
-          <meshBasicMaterial color="#55655f" transparent opacity={.12} depthWrite={false} />
+          <meshBasicMaterial color="#74817c" transparent opacity={.055} depthWrite={false} />
         </mesh>
         <mesh ref={ringC} rotation={[.3, -.58, .5]}>
           <torusGeometry args={[1.94, .006, 6, quality === "low" ? 64 : 160]} />
-          <meshBasicMaterial color="#74867f" transparent opacity={.075} depthWrite={false} />
+          <meshBasicMaterial color="#7e8b86" transparent opacity={.035} depthWrite={false} />
         </mesh>
       </group>
 
@@ -279,10 +275,10 @@ export default function BuildEngine() {
       ))}
 
       {nodes.slice(0, -1).map((p, i) => i % 2 === 0 ? (
-        <Line key={`line-${i}`} points={[p, nodes[i + 1]]} color={i % 4 === 0 ? "#88b8a5" : "#56645f"} transparent opacity={.2} lineWidth={quality === "low" ? .35 : .55} />
+        <Line key={`line-${i}`} points={[p, nodes[i + 1]]} color={i % 4 === 0 ? "#88b8a5" : "#56645f"} transparent opacity={.075} lineWidth={quality === "low" ? .28 : .38} />
       ) : null)}
-      {nodes.length > 8 && <Line points={[nodes[1], nodes[6], nodes[8]]} color="#829d92" transparent opacity={.16} lineWidth={.5} />}
-      {nodes.length > 9 && <Line points={[nodes[3], nodes[2], nodes[9]]} color="#b9cfae" transparent opacity={.10} lineWidth={.42} />}
+      {nodes.length > 8 && <Line points={[nodes[1], nodes[6], nodes[8]]} color="#829d92" transparent opacity={.055} lineWidth={.36} />}
+      {nodes.length > 9 && <Line points={[nodes[3], nodes[2], nodes[9]]} color="#b9cfae" transparent opacity={.035} lineWidth={.3} />}
 
       <EnergyPackets />
       <DataPanes />

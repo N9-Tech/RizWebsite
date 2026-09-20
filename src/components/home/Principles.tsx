@@ -1,0 +1,3 @@
+import { principles } from "@/content/site";
+import SectionLabel from "@/components/ui/SectionLabel";
+export default function Principles(){return <section className="principles shell section"><SectionLabel index="06">ENGINEERING PRINCIPLES</SectionLabel><h2>How I build.</h2><div className="principle-list">{principles.map(([n,t,d])=><article key={n}><span>{n}</span><h3>{t}</h3><p>{d}</p></article>)}</div></section>}

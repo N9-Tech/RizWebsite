@@ -34,10 +34,12 @@ export default function Hero() {
           invalidateOnRefresh: true,
         },
       })
-        .to(".hero-copy", { yPercent: -14, opacity: 0.12, scale: 0.975, ease: "none" }, 0.5)
-        .to(".hero-meta", { opacity: 0.15, ease: "none" }, 0.48)
-        .to(".hero-scroll-hint", { opacity: 0, x: 14, ease: "none" }, 0.24)
-        .to(".hero-orbit-label", { yPercent: -35, opacity: 0, ease: "none" }, 0.35);
+        .to(".hero-copy", { yPercent: -6, opacity: .82, scale: .992, ease: "none" }, 0)
+        .to(".hero-copy", { yPercent: -20, opacity: 0, scale: .955, filter: "blur(8px)", ease: "none" }, .48)
+        .to(".hero-meta", { opacity: .4, y: -8, ease: "none" }, .12)
+        .to(".hero-meta", { opacity: 0, y: -18, ease: "none" }, .54)
+        .to(".hero-scroll-hint", { opacity: 0, x: 18, ease: "none" }, .2)
+        .to(".hero-orbit-label", { yPercent: -48, opacity: 0, ease: "none" }, .32);
     }, ref);
     return () => ctx.revert();
   }, [reduced]);

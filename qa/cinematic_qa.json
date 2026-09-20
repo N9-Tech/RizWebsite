@@ -1,0 +1,128 @@
+[
+  {
+    "name": "mobile-390",
+    "viewport": [
+      390,
+      844
+    ],
+    "overflow": 0,
+    "h1": 1,
+    "duplicate_ids": [],
+    "images_ok": true,
+    "motion_active": true,
+    "menu_ok": true,
+    "menu_a11y_ok": true,
+    "console_ok": true,
+    "stack_ok": true,
+    "scroll_progress": 0.6356260372487553,
+    "errors": []
+  },
+  {
+    "name": "mobile-430",
+    "viewport": [
+      430,
+      932
+    ],
+    "overflow": 0,
+    "h1": 1,
+    "duplicate_ids": [],
+    "images_ok": true,
+    "motion_active": true,
+    "menu_ok": true,
+    "menu_a11y_ok": true,
+    "console_ok": true,
+    "stack_ok": true,
+    "scroll_progress": 0.6472760849492152,
+    "errors": []
+  },
+  {
+    "name": "tablet-768",
+    "viewport": [
+      768,
+      1024
+    ],
+    "overflow": 0,
+    "h1": 1,
+    "duplicate_ids": [],
+    "images_ok": true,
+    "motion_active": true,
+    "menu_ok": true,
+    "menu_a11y_ok": true,
+    "console_ok": true,
+    "stack_ok": true,
+    "scroll_progress": 0.6370127363952142,
+    "errors": []
+  },
+  {
+    "name": "tablet-1024",
+    "viewport": [
+      1024,
+      768
+    ],
+    "overflow": 0,
+    "h1": 1,
+    "duplicate_ids": [],
+    "images_ok": true,
+    "motion_active": true,
+    "menu_ok": true,
+    "menu_a11y_ok": true,
+    "console_ok": true,
+    "stack_ok": true,
+    "scroll_progress": 0.6252404771065795,
+    "errors": []
+  },
+  {
+    "name": "desktop-1280",
+    "viewport": [
+      1280,
+      800
+    ],
+    "overflow": 0,
+    "h1": 1,
+    "duplicate_ids": [],
+    "images_ok": true,
+    "motion_active": true,
+    "menu_ok": true,
+    "menu_a11y_ok": true,
+    "console_ok": true,
+    "stack_ok": true,
+    "scroll_progress": 0.6366592503850762,
+    "errors": []
+  },
+  {
+    "name": "desktop-1440",
+    "viewport": [
+      1440,
+      900
+    ],
+    "overflow": 0,
+    "h1": 1,
+    "duplicate_ids": [],
+    "images_ok": true,
+    "motion_active": true,
+    "menu_ok": true,
+    "menu_a11y_ok": true,
+    "console_ok": true,
+    "stack_ok": true,
+    "scroll_progress": 0.644323719741152,
+    "errors": []
+  },
+  {
+    "name": "desktop-1920",
+    "viewport": [
+      1920,
+      1080
+    ],
+    "overflow": 0,
+    "h1": 1,
+    "duplicate_ids": [],
+    "images_ok": true,
+    "motion_active": true,
+    "menu_ok": true,
+    "menu_a11y_ok": true,
+    "console_ok": true,
+    "stack_ok": true,
+    "scroll_progress": 0.6537515833395425,
+    "errors": []
+  }
+]

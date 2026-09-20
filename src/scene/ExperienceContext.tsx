@@ -7,6 +7,7 @@ export type QualityTier = "high" | "medium" | "low" | "fallback";
 
 interface ExperienceState {
   progressRef: { current: number };
+  targetProgressRef: { current: number };
   setProgress: (value: number) => void;
   phase: ScenePhase;
   activeCapability: string | null;
@@ -28,19 +29,21 @@ function progressToPhase(progress: number): ScenePhase {
 
 export function ExperienceProvider({ children }: { children: ReactNode }) {
   const progressRef = useRef(0);
+  const targetProgressRef = useRef(0);
   const [phase, setPhase] = useState<ScenePhase>("hero");
   const [activeCapability, setActiveCapability] = useState<string | null>(null);
   const [quality, setQuality] = useState<QualityTier>("medium");
 
   const setProgress = useCallback((value: number) => {
     const next = Math.min(1, Math.max(0, value));
-    progressRef.current = next;
+    targetProgressRef.current = next;
     const nextPhase = progressToPhase(next);
     setPhase((current) => current === nextPhase ? current : nextPhase);
   }, []);
 
   const value = useMemo(() => ({
     progressRef,
+    targetProgressRef,
     setProgress,
     phase,
     activeCapability,

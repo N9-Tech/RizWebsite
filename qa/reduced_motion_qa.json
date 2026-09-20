@@ -1,0 +1,8 @@
+{
+  "checks": {
+    "ringAnimation": "none",
+    "pageProgress": "none",
+    "overflow": 0
+  },
+  "errors": []
+}

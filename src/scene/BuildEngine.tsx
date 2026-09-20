@@ -256,14 +256,6 @@ export default function BuildEngine() {
       {nodes.length > 9 && <Line points={[nodes[3], nodes[2], nodes[9]]} color="#d9ff5f" transparent opacity={.1} lineWidth={.3} />}
 
       <EnergyPackets />
-      <DataPanes />
-
-      <mesh ref={scan} position={[0, -1.4, .9]} rotation={[Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[4.2, 4.2]} />
-        <meshBasicMaterial color="#9df5cf" transparent opacity={.05} side={THREE.DoubleSide} depthWrite={false} blending={THREE.AdditiveBlending} />
-      </mesh>
-
-      <gridHelper args={[5.8, 18, "#26443a", "#16241f"]} position={[0, -2.18, -.7]} rotation={[0, 0, .02]} />
     </group>
   );
 }

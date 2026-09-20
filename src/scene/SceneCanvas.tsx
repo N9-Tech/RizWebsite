@@ -1,7 +1,7 @@
 "use client";
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Component, Suspense, useCallback, useEffect, useRef, useState, type ErrorInfo, type ReactNode } from "react";
+import { Component, Suspense, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import * as THREE from "three";
 import BuildEngine from "./BuildEngine";
 import CinematicEnvironment from "./CinematicEnvironment";
@@ -157,7 +157,7 @@ function Scene({ onContextLost }: { onContextLost: () => void }) {
 class SceneBoundary extends Component<{ children: ReactNode; onError: () => void }, { failed: boolean }> {
   state = { failed: false };
   static getDerivedStateFromError() { return { failed: true }; }
-  componentDidCatch(_error: Error, _info: ErrorInfo) { this.props.onError(); }
+  componentDidCatch() { this.props.onError(); }
   render() { return this.state.failed ? null : this.props.children; }
 }
 

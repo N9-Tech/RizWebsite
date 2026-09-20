@@ -11,7 +11,7 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - name: Checkout validation branch
         uses: actions/checkout@v4
@@ -32,3 +32,60 @@ jobs:
 
       - name: Production build
         run: npm run build
+
+      - name: Install visual QA browser
+        run: |
+          npm install --no-save --no-audit --no-fund playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run production visual QA
+        run: |
+          npm start > /tmp/riz-next.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          for i in {1..40}; do
+            if curl -fsS http://127.0.0.1:3000 >/dev/null; then break; fi
+            sleep 1
+          done
+          mkdir -p qa-live
+          node <<'NODE'
+          const { chromium } = require("playwright");
+          (async () => {
+            const browser = await chromium.launch({ headless: true });
+            const cases = [
+              ["desktop-1440", 1440, 900, false],
+              ["mobile-390", 390, 844, true],
+            ];
+            for (const [name, width, height, mobile] of cases) {
+              const page = await browser.newPage({ viewport: { width, height }, isMobile: mobile });
+              const errors = [];
+              page.on("pageerror", e => errors.push(String(e)));
+              page.on("console", m => { if (m.type() === "error") errors.push(m.text()); });
+              await page.goto("http://127.0.0.1:3000", { waitUntil: "networkidle" });
+              await page.waitForTimeout(2200);
+              const result = await page.evaluate(() => ({
+                overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+                h1: document.querySelectorAll("h1").length,
+                canvas: Boolean(document.querySelector(".scene-canvas canvas")),
+                fallback: document.querySelector(".scene-canvas")?.classList.contains("is-fallback") ?? false,
+              }));
+              console.log(name, result, errors);
+              if (result.overflow > 0 || result.h1 !== 1 || !result.canvas || result.fallback || errors.length) {
+                throw new Error(`${name} visual smoke failed: ${JSON.stringify({ result, errors })}`);
+              }
+              await page.screenshot({ path: `qa-live/${name}.png`, fullPage: false });
+              await page.locator("#work").scrollIntoViewIfNeeded();
+              await page.waitForTimeout(500);
+              await page.screenshot({ path: `qa-live/${name}-work.png`, fullPage: false });
+              await page.close();
+            }
+            await browser.close();
+          })();
+          NODE
+
+      - name: Upload visual QA screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-qa
+          path: qa-live/*.png
+          if-no-files-found: error

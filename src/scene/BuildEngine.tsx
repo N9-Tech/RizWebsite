@@ -1,0 +1,305 @@
+"use client";
+
+import { Edges, Line } from "@react-three/drei";
+import { useFrame, useThree } from "@react-three/fiber";
+import { useEffect, useMemo, useRef } from "react";
+import * as THREE from "three";
+import { useExperience } from "./ExperienceContext";
+
+const ACCENT = new THREE.Color("#9df5cf");
+const HOT = new THREE.Color("#d9ff5f");
+
+const nodePositions: [number, number, number][] = [
+  [-1.55, .8, .25], [-1.35, -.72, .5], [-.45, 1.35, -.2], [.4, -1.35, .15],
+  [1.48, .76, .1], [1.62, -.42, -.35], [.75, 1.42, .4], [-.78, -1.4, -.35],
+  [1.95, .15, .2], [-1.92, .1, -.2], [1.05, -.96, .48], [-1.03, .1, .82]
+];
+
+type Strut = { p: [number, number, number]; s: [number, number, number]; r: number; e: [number, number, number] };
+const struts: Strut[] = [
+  { p: [-1.08, .68, 0], s: [.10, 2.5, .12], r: .18, e: [-.55, .22, .15] },
+  { p: [1.06, -.24, .08], s: [.10, 2.72, .12], r: -.12, e: [.58, -.18, -.1] },
+  { p: [.14, 1.08, -.14], s: [2.38, .10, .12], r: .07, e: [.18, .52, -.15] },
+  { p: [-.2, -1.04, .18], s: [2.72, .10, .12], r: -.08, e: [-.16, -.52, .2] },
+  { p: [-.73, .02, -.56], s: [.08, 1.72, .08], r: .72, e: [-.38, .08, -.42] },
+  { p: [.77, .08, -.5], s: [.08, 1.55, .08], r: -.72, e: [.4, -.04, -.38] },
+];
+
+const auraVertex = `
+  varying vec3 vNormalW;
+  varying vec3 vWorld;
+  void main(){
+    vNormalW = normalize(mat3(modelMatrix) * normal);
+    vec4 world = modelMatrix * vec4(position, 1.0);
+    vWorld = world.xyz;
+    gl_Position = projectionMatrix * viewMatrix * world;
+  }
+`;
+
+const auraFragment = `
+  uniform float uTime;
+  uniform float uIntensity;
+  uniform vec3 uColor;
+  varying vec3 vNormalW;
+  varying vec3 vWorld;
+  void main(){
+    vec3 viewDir = normalize(cameraPosition - vWorld);
+    float fresnel = pow(1.0 - max(dot(normalize(vNormalW), viewDir), 0.0), 2.2);
+    float pulse = 0.82 + sin(uTime * 1.7) * 0.12;
+    float alpha = fresnel * (0.28 + uIntensity * 0.28) * pulse;
+    vec3 color = uColor * (0.75 + fresnel * 1.55) * (0.8 + uIntensity * 0.35);
+    gl_FragColor = vec4(color, alpha);
+  }
+`;
+
+function EnergyPackets() {
+  const refs = useRef<Array<THREE.Mesh | null>>([]);
+  const { progressRef } = useExperience();
+  const count = 8;
+  useFrame((state) => {
+    const t = state.clock.getElapsedTime();
+    const progress = progressRef.current;
+    refs.current.forEach((mesh, i) => {
+      if (!mesh) return;
+      const lane = i % 3;
+      const radius = 1.53 + lane * .27;
+      const speed = .2 + lane * .055 + progress * .14;
+      const a = t * speed + i * .91 + progress * Math.PI * 2.4;
+      mesh.position.set(Math.cos(a) * radius, Math.sin(a * (lane === 1 ? .72 : 1)) * (.55 + lane * .14), Math.sin(a) * radius * .38);
+      const pulse = .7 + Math.sin(t * 2.2 + i) * .3;
+      mesh.scale.setScalar(.72 + pulse * .45);
+    });
+  });
+
+  return (
+    <group>
+      {Array.from({ length: count }).map((_, i) => (
+        <mesh key={i} ref={(node) => { refs.current[i] = node; }}>
+          <octahedronGeometry args={[i % 3 === 0 ? .038 : .025, 0]} />
+          <meshBasicMaterial color={i % 4 === 0 ? "#d9ff5f" : "#9df5cf"} transparent opacity={.82} toneMapped={false} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+function ArchitecturalShell() {
+  const refs = useRef<Array<THREE.Mesh | null>>([]);
+  const { progressRef } = useExperience();
+  useFrame((_, delta) => {
+    const opening = THREE.MathUtils.smoothstep(progressRef.current, .12, .56);
+    const ease = Math.min(1, delta * 5);
+    refs.current.forEach((mesh, i) => {
+      if (!mesh) return;
+      const item = struts[i];
+      const tx = item.p[0] + item.e[0] * opening;
+      const ty = item.p[1] + item.e[1] * opening;
+      const tz = item.p[2] + item.e[2] * opening;
+      mesh.position.x = THREE.MathUtils.lerp(mesh.position.x, tx, ease);
+      mesh.position.y = THREE.MathUtils.lerp(mesh.position.y, ty, ease);
+      mesh.position.z = THREE.MathUtils.lerp(mesh.position.z, tz, ease);
+    });
+  });
+
+  return (
+    <group>
+      {struts.map((item, i) => (
+        <mesh key={i} ref={(node) => { refs.current[i] = node; }} position={item.p} rotation={[0, 0, item.r]}>
+          <boxGeometry args={item.s} />
+          <meshStandardMaterial color="#20282a" metalness={.9} roughness={.28} />
+          <Edges color="#53645f" threshold={12} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+function DataPanes() {
+  const paneA = useRef<THREE.Group>(null);
+  const paneB = useRef<THREE.Group>(null);
+  const matA = useRef<THREE.MeshPhysicalMaterial>(null);
+  const matB = useRef<THREE.MeshPhysicalMaterial>(null);
+  const { progressRef } = useExperience();
+  useFrame((state, delta) => {
+    const t = state.clock.getElapsedTime();
+    const progress = progressRef.current;
+    const opening = THREE.MathUtils.smoothstep(progress, .12, .56);
+    const ease = Math.min(1, delta * 4);
+    if (paneA.current) {
+      paneA.current.position.x = THREE.MathUtils.lerp(paneA.current.position.x, 1.55 + opening * .7, ease);
+      paneA.current.position.y = .58 + Math.sin(t * .42) * .045;
+      paneA.current.rotation.y = -.3 - opening * .08;
+    }
+    if (paneB.current) {
+      paneB.current.position.x = THREE.MathUtils.lerp(paneB.current.position.x, -1.35 - opening * .66, ease);
+      paneB.current.position.y = -.72 + Math.sin(t * .37 + 1) * .038;
+      paneB.current.rotation.y = .36 + opening * .08;
+    }
+    const opacity = .12 + progress * .12;
+    if (matA.current) matA.current.opacity = opacity;
+    if (matB.current) matB.current.opacity = opacity * .9;
+  });
+  return (
+    <>
+      <group ref={paneA} position={[1.55, .58, -.72]} rotation={[.04, -.3, .03]}>
+        <mesh>
+          <planeGeometry args={[1.45, .76]} />
+          <meshPhysicalMaterial ref={matA} color="#0e1816" transparent depthWrite={false} opacity={.12} roughness={.16} metalness={.22} side={THREE.DoubleSide} />
+          <Edges color="#497565" />
+        </mesh>
+        {[.24, .08, -.08, -.24].map((y, i) => <mesh key={i} position={[-.2 + i * .04, y, .012]}><planeGeometry args={[.72 - i * .08, .014]} /><meshBasicMaterial color="#75a998" transparent opacity={.26 + i * .04} /></mesh>)}
+      </group>
+      <group ref={paneB} position={[-1.35, -.72, -.6]} rotation={[-.06, .36, -.06]}>
+        <mesh>
+          <planeGeometry args={[1.18, .62]} />
+          <meshPhysicalMaterial ref={matB} color="#0d1515" transparent depthWrite={false} opacity={.108} roughness={.2} metalness={.18} side={THREE.DoubleSide} />
+          <Edges color="#405e55" />
+        </mesh>
+        {[-.34, 0, .34].map((x, i) => <mesh key={i} position={[x, .08 - i * .08, .012]}><circleGeometry args={[.045 + i * .008, 12]} /><meshBasicMaterial color={i === 1 ? "#d9ff5f" : "#9df5cf"} transparent opacity={.55} /></mesh>)}
+      </group>
+    </>
+  );
+}
+
+export default function BuildEngine() {
+  const root = useRef<THREE.Group>(null);
+  const core = useRef<THREE.Mesh>(null);
+  const inner = useRef<THREE.Mesh>(null);
+  const orbitGroup = useRef<THREE.Group>(null);
+  const ringA = useRef<THREE.Mesh>(null);
+  const ringB = useRef<THREE.Mesh>(null);
+  const ringC = useRef<THREE.Mesh>(null);
+  const scan = useRef<THREE.Mesh>(null);
+  const coreLight = useRef<THREE.PointLight>(null);
+  const nodeRefs = useRef<Array<THREE.Mesh | null>>([]);
+  const { viewport } = useThree();
+  const { progressRef, activeCapability, quality } = useExperience();
+  const nodes = useMemo(() => nodePositions.slice(0, quality === "low" ? 8 : 12), [quality]);
+
+  const auraMaterial = useMemo(() => new THREE.ShaderMaterial({
+    uniforms: { uTime: { value: 0 }, uIntensity: { value: 0 }, uColor: { value: ACCENT.clone() } },
+    vertexShader: auraVertex,
+    fragmentShader: auraFragment,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    side: THREE.FrontSide,
+    toneMapped: false,
+  }), []);
+
+  useEffect(() => () => auraMaterial.dispose(), [auraMaterial]);
+
+  useFrame((state, delta) => {
+    if (!root.current || !core.current || !inner.current) return;
+    const t = state.clock.getElapsedTime();
+    const progress = progressRef.current;
+    const opening = THREE.MathUtils.smoothstep(progress, .12, .56);
+    const inspect = THREE.MathUtils.smoothstep(progress, .31, .68);
+    const ease = Math.min(1, delta * 3.6);
+    const desktopOffset = viewport.width > 7 ? 1.38 : viewport.width > 5 ? .78 : .2;
+    const resolve = THREE.MathUtils.smoothstep(progress, .84, 1);
+
+    root.current.position.x = THREE.MathUtils.lerp(root.current.position.x, desktopOffset + state.pointer.x * .11, ease);
+    root.current.position.y = THREE.MathUtils.lerp(root.current.position.y, state.pointer.y * .08 - resolve * .3, ease);
+    root.current.rotation.y = THREE.MathUtils.lerp(root.current.rotation.y, progress * .72 + state.pointer.x * .08 + Math.sin(t * .16) * .035, ease);
+    root.current.rotation.x = THREE.MathUtils.lerp(root.current.rotation.x, -.08 + progress * .2 - state.pointer.y * .045, ease);
+    root.current.rotation.z = THREE.MathUtils.lerp(root.current.rotation.z, Math.sin(t * .12) * .018, ease);
+    root.current.scale.setScalar(1 - resolve * .12);
+
+    const pulse = 1 + Math.sin(t * 1.45) * .028 + (activeCapability ? .055 : 0) + inspect * .02;
+    inner.current.scale.setScalar(pulse);
+    core.current.rotation.y = -t * .16 - progress * .4;
+    core.current.rotation.x = t * .09;
+
+    if (orbitGroup.current) orbitGroup.current.scale.setScalar(1 + opening * .08);
+    if (ringA.current) ringA.current.rotation.z = t * .08 + progress * 1.1;
+    if (ringB.current) ringB.current.rotation.x = 1.08 + Math.sin(t * .18) * .08 + progress * .3;
+    if (ringC.current) ringC.current.rotation.y = -.58 + t * .045 - progress * .42;
+
+    if (scan.current) {
+      scan.current.position.y = -1.45 + ((t * .34 + progress * 2.4) % 1) * 2.9;
+      const material = scan.current.material as THREE.MeshBasicMaterial;
+      material.opacity = .03 + inspect * .09;
+    }
+
+    if (coreLight.current) coreLight.current.intensity = 2.8 + opening * 2.2;
+
+    auraMaterial.uniforms.uTime.value = t;
+    auraMaterial.uniforms.uIntensity.value = opening + (activeCapability ? .35 : 0);
+    (auraMaterial.uniforms.uColor.value as THREE.Color).lerp(activeCapability ? HOT : ACCENT, .06);
+
+    nodeRefs.current.forEach((mesh, i) => {
+      if (!mesh) return;
+      const hit = Boolean(activeCapability) && i % 3 === 0;
+      const s = 1 + Math.sin(t * 1.8 + i * .72) * .12 + (hit ? .48 : 0);
+      mesh.scale.setScalar(s);
+    });
+  });
+
+  return (
+    <group ref={root} position={[1.38, 0, 0]}>
+      <group>
+        <mesh ref={inner}>
+          <icosahedronGeometry args={[.63, quality === "high" ? 4 : 2]} />
+          <meshStandardMaterial color="#b8ffe1" emissive="#65e6b3" emissiveIntensity={2.45} roughness={.18} metalness={.08} toneMapped={false} />
+        </mesh>
+        <mesh ref={core} scale={1.12}>
+          <icosahedronGeometry args={[.71, 2]} />
+          <meshPhysicalMaterial color="#0c1212" transparent opacity={.66} metalness={.78} roughness={.2} clearcoat={.7} clearcoatRoughness={.22} />
+          <Edges color="#8fd8bb" threshold={18} />
+        </mesh>
+        <mesh scale={1.42} material={auraMaterial}>
+          <icosahedronGeometry args={[.72, 3]} />
+        </mesh>
+        <pointLight ref={coreLight} color="#8ff3c9" intensity={2.8} distance={5.4} decay={2} />
+      </group>
+
+      <ArchitecturalShell />
+
+      <group ref={orbitGroup}>
+        <mesh ref={ringA} rotation={[Math.PI / 2, 0, .18]}>
+          <torusGeometry args={[1.38, .012, 8, quality === "low" ? 64 : 128]} />
+          <meshBasicMaterial color="#7fa796" transparent opacity={.38} />
+        </mesh>
+        <mesh ref={ringB} rotation={[1.08, .2, -.24]}>
+          <torusGeometry args={[1.68, .008, 6, quality === "low" ? 64 : 128]} />
+          <meshBasicMaterial color="#4d665d" transparent opacity={.28} />
+        </mesh>
+        <mesh ref={ringC} rotation={[.3, -.58, .5]}>
+          <torusGeometry args={[1.94, .006, 6, quality === "low" ? 64 : 160]} />
+          <meshBasicMaterial color="#64786f" transparent opacity={.2} />
+        </mesh>
+      </group>
+
+      {nodes.map((p, i) => (
+        <group key={i} position={p}>
+          <mesh>
+            <boxGeometry args={[.17, .17, .17]} />
+            <meshStandardMaterial color="#20292a" metalness={.88} roughness={.28} />
+            <Edges color="#52625e" />
+          </mesh>
+          <mesh ref={(node) => { nodeRefs.current[i] = node; }} position={[0, 0, .102]}>
+            <planeGeometry args={[.082, .082]} />
+            <meshBasicMaterial color={activeCapability && i % 3 === 0 ? "#d9ff5f" : "#9df5cf"} transparent opacity={.9} toneMapped={false} />
+          </mesh>
+        </group>
+      ))}
+
+      {nodes.slice(0, -1).map((p, i) => i % 2 === 0 ? (
+        <Line key={`line-${i}`} points={[p, nodes[i + 1]]} color={i % 4 === 0 ? "#9df5cf" : "#60776e"} transparent opacity={.34} lineWidth={quality === "low" ? .35 : .55} />
+      ) : null)}
+      {nodes.length > 8 && <Line points={[nodes[1], nodes[6], nodes[8]]} color="#9df5cf" transparent opacity={.3} lineWidth={.5} />}
+      {nodes.length > 9 && <Line points={[nodes[3], nodes[2], nodes[9]]} color="#d9ff5f" transparent opacity={.18} lineWidth={.42} />}
+
+      <EnergyPackets />
+      <DataPanes />
+
+      <mesh ref={scan} position={[0, -1.4, .9]} rotation={[Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[4.2, 4.2]} />
+        <meshBasicMaterial color="#9df5cf" transparent opacity={.05} side={THREE.DoubleSide} depthWrite={false} blending={THREE.AdditiveBlending} />
+      </mesh>
+
+      <gridHelper args={[5.8, 18, "#26443a", "#16241f"]} position={[0, -2.18, -.7]} rotation={[0, 0, .02]} />
+    </group>
+  );
+}

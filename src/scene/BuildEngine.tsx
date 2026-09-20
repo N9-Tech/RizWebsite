@@ -1,6 +1,6 @@
 "use client";
 
-import { Edges, Line } from "@react-three/drei";
+import { Line } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
@@ -55,7 +55,7 @@ const auraFragment = `
 function EnergyPackets() {
   const refs = useRef<Array<THREE.Mesh | null>>([]);
   const { progressRef } = useExperience();
-  const count = 6;
+  const count = 4;
   useFrame((state) => {
     const t = state.clock.getElapsedTime();
     const progress = progressRef.current;
@@ -76,7 +76,7 @@ function EnergyPackets() {
       {Array.from({ length: count }).map((_, i) => (
         <mesh key={i} ref={(node) => { refs.current[i] = node; }}>
           <octahedronGeometry args={[i % 3 === 0 ? .038 : .025, 0]} />
-          <meshBasicMaterial color={i % 4 === 0 ? "#d9ff5f" : "#9df5cf"} transparent opacity={.58} toneMapped={false} />
+          <meshBasicMaterial color={i % 4 === 0 ? "#d9ff5f" : "#9df5cf"} transparent opacity={.38} toneMapped={false} />
         </mesh>
       ))}
     </group>
@@ -204,16 +204,15 @@ export default function BuildEngine() {
     <group ref={root} position={[1.38, 0, 0]}>
       <group>
         <mesh ref={inner}>
-          <icosahedronGeometry args={[.63, quality === "high" ? 4 : 2]} />
-          <meshPhysicalMaterial color="#baf7dd" emissive="#4fbf95" emissiveIntensity={1.45} roughness={.28} metalness={.06} clearcoat={.35} clearcoatRoughness={.32} toneMapped={false} />
+          <sphereGeometry args={[.5, quality === "low" ? 24 : 48, quality === "low" ? 16 : 32]} />
+          <meshPhysicalMaterial color="#83bda7" emissive="#285f4d" emissiveIntensity={.72} roughness={.36} metalness={.12} clearcoat={.42} clearcoatRoughness={.3} />
         </mesh>
-        <mesh ref={core} scale={1.12}>
-          <icosahedronGeometry args={[.71, 2]} />
-          <meshPhysicalMaterial color="#0a0e0f" transparent opacity={.78} metalness={.88} roughness={.28} clearcoat={.9} clearcoatRoughness={.18} />
-          <Edges color="#8fd8bb" threshold={18} />
+        <mesh ref={core} scale={1.18}>
+          <icosahedronGeometry args={[.73, quality === "low" ? 2 : 3]} />
+          <meshPhysicalMaterial color="#0b1011" transparent opacity={.8} metalness={.8} roughness={.32} clearcoat={.72} clearcoatRoughness={.2} />
         </mesh>
-        <mesh scale={1.42} material={auraMaterial}>
-          <icosahedronGeometry args={[.72, 3]} />
+        <mesh scale={1.34} material={auraMaterial}>
+          <icosahedronGeometry args={[.73, quality === "low" ? 2 : 3]} />
         </mesh>
         <pointLight ref={coreLight} color="#8ff3c9" intensity={2.8} distance={5.4} decay={2} />
       </group>
@@ -236,24 +235,22 @@ export default function BuildEngine() {
       </group>
 
       {nodes.map((p, i) => (
-        <group key={i} position={p}>
-          <mesh>
-            <boxGeometry args={[.17, .17, .17]} />
-            <meshStandardMaterial color="#20292a" metalness={.88} roughness={.28} />
-            <Edges color="#52625e" />
-          </mesh>
-          <mesh ref={(node) => { nodeRefs.current[i] = node; }} position={[0, 0, .102]}>
-            <planeGeometry args={[.082, .082]} />
-            <meshBasicMaterial color={activeCapability && i % 3 === 0 ? "#d9ff5f" : "#9df5cf"} transparent opacity={.68} toneMapped={false} />
-          </mesh>
-        </group>
+        <mesh key={i} ref={(node) => { nodeRefs.current[i] = node; }} position={p}>
+          <octahedronGeometry args={[.035, 1]} />
+          <meshBasicMaterial
+            color={activeCapability && i % 3 === 0 ? "#d9ff5f" : "#9df5cf"}
+            transparent
+            opacity={activeCapability && i % 3 === 0 ? .72 : .34}
+            toneMapped={false}
+          />
+        </mesh>
       ))}
 
       {nodes.slice(0, -1).map((p, i) => i % 2 === 0 ? (
-        <Line key={`line-${i}`} points={[p, nodes[i + 1]]} color={i % 4 === 0 ? "#9df5cf" : "#60776e"} transparent opacity={.19} lineWidth={quality === "low" ? .25 : .4} />
+        <Line key={`line-${i}`} points={[p, nodes[i + 1]]} color={i % 4 === 0 ? "#9df5cf" : "#60776e"} transparent opacity={.075} lineWidth={quality === "low" ? .2 : .28} />
       ) : null)}
-      {nodes.length > 8 && <Line points={[nodes[1], nodes[6], nodes[8]]} color="#9df5cf" transparent opacity={.17} lineWidth={.36} />}
-      {nodes.length > 9 && <Line points={[nodes[3], nodes[2], nodes[9]]} color="#d9ff5f" transparent opacity={.1} lineWidth={.3} />}
+      {nodes.length > 8 && <Line points={[nodes[1], nodes[6], nodes[8]]} color="#9df5cf" transparent opacity={.06} lineWidth={.26} />}
+      {nodes.length > 9 && <Line points={[nodes[3], nodes[2], nodes[9]]} color="#d9ff5f" transparent opacity={.045} lineWidth={.22} />}
 
       <EnergyPackets />
     </group>

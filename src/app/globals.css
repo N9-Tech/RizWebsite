@@ -212,3 +212,13 @@ main{position:relative;z-index:2}.section-label{display:flex;align-items:center;
 @media(prefers-reduced-motion:reduce){
   .scene-atmosphere,.scene-depth-haze-a,.scene-depth-haze-b{animation:none}
 }
+
+/* Final overflow + sculpture refinement */
+html,body{max-width:100%;overflow-x:clip}
+.stack-plane{overflow:hidden}
+@media(max-width:1023px){
+  .hero-copy{width:min(78vw,680px)}
+}
+@media(max-width:767px){
+  .hero-copy{width:100%}
+}

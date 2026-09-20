@@ -66,7 +66,7 @@ jobs:
               });
               await page.goto('http://127.0.0.1:3000', { waitUntil: 'networkidle' });
               page.setDefaultTimeout(15000);
-              await page.waitForTimeout(900);
+              await page.waitForTimeout(2000);
               const metrics = await page.evaluate(() => ({
                 scrollWidth: document.documentElement.scrollWidth,
                 clientWidth: document.documentElement.clientWidth,
@@ -77,7 +77,7 @@ jobs:
               if (metrics.h1 !== 1) errors.push(name + ': expected one h1');
               await page.screenshot({ path: 'qa/polish-' + name + '-hero.png', fullPage: false, animations: 'disabled', timeout: 15000 });
               await page.evaluate(() => window.scrollTo(0, Math.round(document.documentElement.scrollHeight * .28)));
-              await page.waitForTimeout(700);
+              await page.waitForTimeout(900);
               await page.screenshot({ path: 'qa/polish-' + name + '-depth.png', fullPage: false, animations: 'disabled', timeout: 15000 });
               console.log(name, metrics);
               await page.close();

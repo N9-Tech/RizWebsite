@@ -65,7 +65,8 @@ jobs:
                 if (msg.type() === 'error') errors.push(name + ': console: ' + msg.text());
               });
               await page.goto('http://127.0.0.1:3000', { waitUntil: 'networkidle' });
-              page.setDefaultTimeout(15000);\n              await page.waitForTimeout(900);
+              page.setDefaultTimeout(15000);
+              await page.waitForTimeout(900);
               const metrics = await page.evaluate(() => ({
                 scrollWidth: document.documentElement.scrollWidth,
                 clientWidth: document.documentElement.clientWidth,

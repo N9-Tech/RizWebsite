@@ -106,58 +106,11 @@ function ArchitecturalShell() {
       {struts.map((item, i) => (
         <mesh key={i} ref={(node) => { refs.current[i] = node; }} position={item.p} rotation={[0, 0, item.r]}>
           <boxGeometry args={item.s} />
-          <meshStandardMaterial color="#20282a" metalness={.9} roughness={.28} />
+          <meshStandardMaterial color="#151b1c" metalness={.82} roughness={.38} envMapIntensity={.35} />
           <Edges color="#53645f" threshold={12} />
         </mesh>
       ))}
     </group>
-  );
-}
-
-function DataPanes() {
-  const paneA = useRef<THREE.Group>(null);
-  const paneB = useRef<THREE.Group>(null);
-  const matA = useRef<THREE.MeshPhysicalMaterial>(null);
-  const matB = useRef<THREE.MeshPhysicalMaterial>(null);
-  const { progressRef } = useExperience();
-  useFrame((state, delta) => {
-    const t = state.clock.getElapsedTime();
-    const progress = progressRef.current;
-    const opening = THREE.MathUtils.smoothstep(progress, .12, .56);
-    const ease = Math.min(1, delta * 4);
-    if (paneA.current) {
-      paneA.current.position.x = THREE.MathUtils.lerp(paneA.current.position.x, 1.55 + opening * .7, ease);
-      paneA.current.position.y = .58 + Math.sin(t * .42) * .045;
-      paneA.current.rotation.y = -.3 - opening * .08;
-    }
-    if (paneB.current) {
-      paneB.current.position.x = THREE.MathUtils.lerp(paneB.current.position.x, -1.35 - opening * .66, ease);
-      paneB.current.position.y = -.72 + Math.sin(t * .37 + 1) * .038;
-      paneB.current.rotation.y = .36 + opening * .08;
-    }
-    const opacity = .12 + progress * .12;
-    if (matA.current) matA.current.opacity = opacity;
-    if (matB.current) matB.current.opacity = opacity * .9;
-  });
-  return (
-    <>
-      <group ref={paneA} position={[1.55, .58, -.72]} rotation={[.04, -.3, .03]}>
-        <mesh>
-          <planeGeometry args={[1.45, .76]} />
-          <meshPhysicalMaterial ref={matA} color="#0e1816" transparent depthWrite={false} opacity={.12} roughness={.16} metalness={.22} side={THREE.DoubleSide} />
-          <Edges color="#497565" />
-        </mesh>
-        {[.24, .08, -.08, -.24].map((y, i) => <mesh key={i} position={[-.2 + i * .04, y, .012]}><planeGeometry args={[.72 - i * .08, .014]} /><meshBasicMaterial color="#75a998" transparent opacity={.26 + i * .04} /></mesh>)}
-      </group>
-      <group ref={paneB} position={[-1.35, -.72, -.6]} rotation={[-.06, .36, -.06]}>
-        <mesh>
-          <planeGeometry args={[1.18, .62]} />
-          <meshPhysicalMaterial ref={matB} color="#0d1515" transparent depthWrite={false} opacity={.108} roughness={.2} metalness={.18} side={THREE.DoubleSide} />
-          <Edges color="#405e55" />
-        </mesh>
-        {[-.34, 0, .34].map((x, i) => <mesh key={i} position={[x, .08 - i * .08, .012]}><circleGeometry args={[.045 + i * .008, 12]} /><meshBasicMaterial color={i === 1 ? "#d9ff5f" : "#9df5cf"} transparent opacity={.55} /></mesh>)}
-      </group>
-    </>
   );
 }
 
@@ -200,11 +153,22 @@ export default function BuildEngine() {
     const resolve = THREE.MathUtils.smoothstep(progress, .84, 1);
 
     root.current.position.x = THREE.MathUtils.lerp(root.current.position.x, desktopOffset + state.pointer.x * .11, ease);
-    root.current.position.y = THREE.MathUtils.lerp(root.current.position.y, state.pointer.y * .08 - resolve * .3, ease);
-    root.current.rotation.y = THREE.MathUtils.lerp(root.current.rotation.y, progress * .72 + state.pointer.x * .08 + Math.sin(t * .16) * .035, ease);
-    root.current.rotation.x = THREE.MathUtils.lerp(root.current.rotation.x, -.08 + progress * .2 - state.pointer.y * .045, ease);
+    const rise = THREE.MathUtils.smoothstep(progress, .18, .58) * .18;
+    const settle = THREE.MathUtils.smoothstep(progress, .72, 1) * .34;
+    root.current.position.y = THREE.MathUtils.lerp(root.current.position.y, state.pointer.y * .07 + rise - settle, ease);
+    root.current.rotation.y = THREE.MathUtils.lerp(
+      root.current.rotation.y,
+      -.08 + progress * .94 + state.pointer.x * .07 + Math.sin(t * .11) * .028,
+      ease,
+    );
+    root.current.rotation.x = THREE.MathUtils.lerp(
+      root.current.rotation.x,
+      -.12 + opening * .16 + inspect * .08 - resolve * .05 - state.pointer.y * .035,
+      ease,
+    );
     root.current.rotation.z = THREE.MathUtils.lerp(root.current.rotation.z, Math.sin(t * .12) * .018, ease);
-    root.current.scale.setScalar(1 - resolve * .12);
+    const breathe = 1 + Math.sin(t * .22) * .006;
+    root.current.scale.setScalar((1 + opening * .025 - resolve * .1) * breathe);
 
     const pulse = 1 + Math.sin(t * 1.45) * .028 + (activeCapability ? .055 : 0) + inspect * .02;
     inner.current.scale.setScalar(pulse);
@@ -241,11 +205,11 @@ export default function BuildEngine() {
       <group>
         <mesh ref={inner}>
           <icosahedronGeometry args={[.63, quality === "high" ? 4 : 2]} />
-          <meshStandardMaterial color="#b8ffe1" emissive="#65e6b3" emissiveIntensity={2.45} roughness={.18} metalness={.08} toneMapped={false} />
+          <meshPhysicalMaterial color="#baf7dd" emissive="#4fbf95" emissiveIntensity={1.45} roughness={.28} metalness={.06} clearcoat={.35} clearcoatRoughness={.32} toneMapped={false} />
         </mesh>
         <mesh ref={core} scale={1.12}>
           <icosahedronGeometry args={[.71, 2]} />
-          <meshPhysicalMaterial color="#0c1212" transparent opacity={.66} metalness={.78} roughness={.2} clearcoat={.7} clearcoatRoughness={.22} />
+          <meshPhysicalMaterial color="#0a0e0f" transparent opacity={.78} metalness={.88} roughness={.28} clearcoat={.9} clearcoatRoughness={.18} />
           <Edges color="#8fd8bb" threshold={18} />
         </mesh>
         <mesh scale={1.42} material={auraMaterial}>

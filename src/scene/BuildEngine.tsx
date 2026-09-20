@@ -263,9 +263,8 @@ export default function BuildEngine() {
       {nodes.map((p, i) => (
         <group key={i} position={p}>
           <mesh>
-            <boxGeometry args={[.17, .17, .17]} />
-            <meshStandardMaterial color="#121817" metalness={.78} roughness={.38} />
-            <Edges color="#35433e" />
+            <sphereGeometry args={[.06, 18, 12]} />
+            <meshPhysicalMaterial color="#101514" metalness={.62} roughness={.24} clearcoat={.7} />
           </mesh>
           <mesh ref={(node) => { nodeRefs.current[i] = node; }} position={[0, 0, .12]}>
             <sphereGeometry args={[.027, 14, 10]} />

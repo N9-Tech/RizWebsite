@@ -55,7 +55,7 @@ const auraFragment = `
 function EnergyPackets() {
   const refs = useRef<Array<THREE.Mesh | null>>([]);
   const { progressRef } = useExperience();
-  const count = 8;
+  const count = 6;
   useFrame((state) => {
     const t = state.clock.getElapsedTime();
     const progress = progressRef.current;
@@ -76,7 +76,7 @@ function EnergyPackets() {
       {Array.from({ length: count }).map((_, i) => (
         <mesh key={i} ref={(node) => { refs.current[i] = node; }}>
           <octahedronGeometry args={[i % 3 === 0 ? .038 : .025, 0]} />
-          <meshBasicMaterial color={i % 4 === 0 ? "#d9ff5f" : "#9df5cf"} transparent opacity={.82} toneMapped={false} />
+          <meshBasicMaterial color={i % 4 === 0 ? "#d9ff5f" : "#9df5cf"} transparent opacity={.58} toneMapped={false} />
         </mesh>
       ))}
     </group>
@@ -223,15 +223,15 @@ export default function BuildEngine() {
       <group ref={orbitGroup}>
         <mesh ref={ringA} rotation={[Math.PI / 2, 0, .18]}>
           <torusGeometry args={[1.38, .012, 8, quality === "low" ? 64 : 128]} />
-          <meshBasicMaterial color="#7fa796" transparent opacity={.38} />
+          <meshBasicMaterial color="#8da99d" transparent opacity={.16} />
         </mesh>
         <mesh ref={ringB} rotation={[1.08, .2, -.24]}>
           <torusGeometry args={[1.68, .008, 6, quality === "low" ? 64 : 128]} />
-          <meshBasicMaterial color="#4d665d" transparent opacity={.28} />
+          <meshBasicMaterial color="#63756e" transparent opacity={.105} />
         </mesh>
         <mesh ref={ringC} rotation={[.3, -.58, .5]}>
           <torusGeometry args={[1.94, .006, 6, quality === "low" ? 64 : 160]} />
-          <meshBasicMaterial color="#64786f" transparent opacity={.2} />
+          <meshBasicMaterial color="#75857f" transparent opacity={.075} />
         </mesh>
       </group>
 
@@ -244,16 +244,16 @@ export default function BuildEngine() {
           </mesh>
           <mesh ref={(node) => { nodeRefs.current[i] = node; }} position={[0, 0, .102]}>
             <planeGeometry args={[.082, .082]} />
-            <meshBasicMaterial color={activeCapability && i % 3 === 0 ? "#d9ff5f" : "#9df5cf"} transparent opacity={.9} toneMapped={false} />
+            <meshBasicMaterial color={activeCapability && i % 3 === 0 ? "#d9ff5f" : "#9df5cf"} transparent opacity={.68} toneMapped={false} />
           </mesh>
         </group>
       ))}
 
       {nodes.slice(0, -1).map((p, i) => i % 2 === 0 ? (
-        <Line key={`line-${i}`} points={[p, nodes[i + 1]]} color={i % 4 === 0 ? "#9df5cf" : "#60776e"} transparent opacity={.34} lineWidth={quality === "low" ? .35 : .55} />
+        <Line key={`line-${i}`} points={[p, nodes[i + 1]]} color={i % 4 === 0 ? "#9df5cf" : "#60776e"} transparent opacity={.19} lineWidth={quality === "low" ? .25 : .4} />
       ) : null)}
-      {nodes.length > 8 && <Line points={[nodes[1], nodes[6], nodes[8]]} color="#9df5cf" transparent opacity={.3} lineWidth={.5} />}
-      {nodes.length > 9 && <Line points={[nodes[3], nodes[2], nodes[9]]} color="#d9ff5f" transparent opacity={.18} lineWidth={.42} />}
+      {nodes.length > 8 && <Line points={[nodes[1], nodes[6], nodes[8]]} color="#9df5cf" transparent opacity={.17} lineWidth={.36} />}
+      {nodes.length > 9 && <Line points={[nodes[3], nodes[2], nodes[9]]} color="#d9ff5f" transparent opacity={.1} lineWidth={.3} />}
 
       <EnergyPackets />
       <DataPanes />

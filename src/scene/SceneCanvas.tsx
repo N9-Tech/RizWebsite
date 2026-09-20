@@ -1,5 +1,6 @@
 "use client";
 
+import { Environment, Lightformer } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Component, Suspense, useCallback, useEffect, useRef, useState, type ErrorInfo, type ReactNode } from "react";
 import * as THREE from "three";
@@ -169,6 +170,11 @@ function Scene({ onContextLost }: { onContextLost: () => void }) {
       }}
     >
       <fog attach="fog" args={["#030405", 5.6, 18.5]} />
+      <Environment resolution={128}>
+        <Lightformer form="rect" intensity={2.8} color="#d9e5e0" position={[4.5, 3.2, 5.4]} rotation={[0, -.55, 0]} scale={[5, 2.4, 1]} />
+        <Lightformer form="rect" intensity={1.5} color="#6c8d80" position={[-4, -.4, 2.2]} rotation={[0, .8, 0]} scale={[3.2, 1.3, 1]} />
+        <Lightformer form="ring" intensity={1.1} color="#b9cbc4" position={[1.4, 4.2, -2.8]} rotation={[Math.PI / 2, 0, 0]} scale={2.8} />
+      </Environment>
       <DepthEnvironment />
       <CinematicLights />
       <CameraRig />

@@ -107,7 +107,6 @@ function ArchitecturalShell() {
         <mesh key={i} ref={(node) => { refs.current[i] = node; }} position={item.p} rotation={[0, 0, item.r]}>
           <boxGeometry args={item.s} />
           <meshStandardMaterial color="#151b1c" metalness={.82} roughness={.38} envMapIntensity={.35} />
-          <Edges color="#53645f" threshold={12} />
         </mesh>
       ))}
     </group>

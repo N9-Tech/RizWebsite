@@ -6,8 +6,8 @@ import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useExperience } from "./ExperienceContext";
 
-const ACCENT = new THREE.Color("#9df5cf");
-const HOT = new THREE.Color("#d9ff5f");
+const ACCENT = new THREE.Color("#8edfc0");
+const HOT = new THREE.Color("#dff3c9");
 
 const nodePositions: [number, number, number][] = [
   [-1.55, .8, .25], [-1.35, -.72, .5], [-.45, 1.35, -.2], [.4, -1.35, .15],
@@ -76,7 +76,7 @@ function EnergyPackets() {
       {Array.from({ length: count }).map((_, i) => (
         <mesh key={i} ref={(node) => { refs.current[i] = node; }}>
           <octahedronGeometry args={[i % 3 === 0 ? .038 : .025, 0]} />
-          <meshBasicMaterial color={i % 4 === 0 ? "#d9ff5f" : "#9df5cf"} transparent opacity={.82} toneMapped={false} />
+          <meshBasicMaterial color={i % 4 === 0 ? "#dff3c9" : "#8edfc0"} transparent opacity={.52} toneMapped={false} />
         </mesh>
       ))}
     </group>
@@ -106,8 +106,8 @@ function ArchitecturalShell() {
       {struts.map((item, i) => (
         <mesh key={i} ref={(node) => { refs.current[i] = node; }} position={item.p} rotation={[0, 0, item.r]}>
           <boxGeometry args={item.s} />
-          <meshStandardMaterial color="#20282a" metalness={.9} roughness={.28} />
-          <Edges color="#53645f" threshold={12} />
+          <meshStandardMaterial color="#111716" metalness={.78} roughness={.42} />
+          <Edges color="#35443f" threshold={16} />
         </mesh>
       ))}
     </group>
@@ -135,7 +135,7 @@ function DataPanes() {
       paneB.current.position.y = -.72 + Math.sin(t * .37 + 1) * .038;
       paneB.current.rotation.y = .36 + opening * .08;
     }
-    const opacity = .12 + progress * .12;
+    const opacity = .065 + progress * .055;
     if (matA.current) matA.current.opacity = opacity;
     if (matB.current) matB.current.opacity = opacity * .9;
   });
@@ -144,18 +144,18 @@ function DataPanes() {
       <group ref={paneA} position={[1.55, .58, -.72]} rotation={[.04, -.3, .03]}>
         <mesh>
           <planeGeometry args={[1.45, .76]} />
-          <meshPhysicalMaterial ref={matA} color="#0e1816" transparent depthWrite={false} opacity={.12} roughness={.16} metalness={.22} side={THREE.DoubleSide} />
-          <Edges color="#497565" />
+          <meshPhysicalMaterial ref={matA} color="#0a0f0e" transparent depthWrite={false} opacity={.065} roughness={.28} metalness={.34} side={THREE.DoubleSide} />
+          <Edges color="#33453f" />
         </mesh>
-        {[.24, .08, -.08, -.24].map((y, i) => <mesh key={i} position={[-.2 + i * .04, y, .012]}><planeGeometry args={[.72 - i * .08, .014]} /><meshBasicMaterial color="#75a998" transparent opacity={.26 + i * .04} /></mesh>)}
+        {[.24, .08, -.08, -.24].map((y, i) => <mesh key={i} position={[-.2 + i * .04, y, .012]}><planeGeometry args={[.72 - i * .08, .014]} /><meshBasicMaterial color="#7d968c" transparent opacity={.15 + i * .025} /></mesh>)}
       </group>
       <group ref={paneB} position={[-1.35, -.72, -.6]} rotation={[-.06, .36, -.06]}>
         <mesh>
           <planeGeometry args={[1.18, .62]} />
-          <meshPhysicalMaterial ref={matB} color="#0d1515" transparent depthWrite={false} opacity={.108} roughness={.2} metalness={.18} side={THREE.DoubleSide} />
-          <Edges color="#405e55" />
+          <meshPhysicalMaterial ref={matB} color="#090e0d" transparent depthWrite={false} opacity={.058} roughness={.3} metalness={.3} side={THREE.DoubleSide} />
+          <Edges color="#2f403a" />
         </mesh>
-        {[-.34, 0, .34].map((x, i) => <mesh key={i} position={[x, .08 - i * .08, .012]}><circleGeometry args={[.045 + i * .008, 12]} /><meshBasicMaterial color={i === 1 ? "#d9ff5f" : "#9df5cf"} transparent opacity={.55} /></mesh>)}
+        {[-.34, 0, .34].map((x, i) => <mesh key={i} position={[x, .08 - i * .08, .012]}><circleGeometry args={[.045 + i * .008, 12]} /><meshBasicMaterial color={i === 1 ? "#dff3c9" : "#8edfc0"} transparent opacity={.38} /></mesh>)}
       </group>
     </>
   );
@@ -169,7 +169,6 @@ export default function BuildEngine() {
   const ringA = useRef<THREE.Mesh>(null);
   const ringB = useRef<THREE.Mesh>(null);
   const ringC = useRef<THREE.Mesh>(null);
-  const scan = useRef<THREE.Mesh>(null);
   const coreLight = useRef<THREE.PointLight>(null);
   const nodeRefs = useRef<Array<THREE.Mesh | null>>([]);
   const { viewport } = useThree();
@@ -216,13 +215,7 @@ export default function BuildEngine() {
     if (ringB.current) ringB.current.rotation.x = 1.08 + Math.sin(t * .18) * .08 + progress * .3;
     if (ringC.current) ringC.current.rotation.y = -.58 + t * .045 - progress * .42;
 
-    if (scan.current) {
-      scan.current.position.y = -1.45 + ((t * .34 + progress * 2.4) % 1) * 2.9;
-      const material = scan.current.material as THREE.MeshBasicMaterial;
-      material.opacity = .03 + inspect * .09;
-    }
-
-    if (coreLight.current) coreLight.current.intensity = 2.8 + opening * 2.2;
+    if (coreLight.current) coreLight.current.intensity = 1.6 + opening * 1.15;
 
     auraMaterial.uniforms.uTime.value = t;
     auraMaterial.uniforms.uIntensity.value = opening + (activeCapability ? .35 : 0);
@@ -240,18 +233,18 @@ export default function BuildEngine() {
     <group ref={root} position={[1.38, 0, 0]}>
       <group>
         <mesh ref={inner}>
-          <icosahedronGeometry args={[.63, quality === "high" ? 4 : 2]} />
-          <meshStandardMaterial color="#b8ffe1" emissive="#65e6b3" emissiveIntensity={2.45} roughness={.18} metalness={.08} toneMapped={false} />
+          <sphereGeometry args={[.31, quality === "high" ? 48 : 28, quality === "high" ? 48 : 28]} />
+          <meshPhysicalMaterial color="#dcebe5" emissive="#71b89e" emissiveIntensity={1.55} metalness={.22} roughness={.12} clearcoat={1} clearcoatRoughness={.12} toneMapped={false} />
         </mesh>
         <mesh ref={core} scale={1.12}>
-          <icosahedronGeometry args={[.71, 2]} />
-          <meshPhysicalMaterial color="#0c1212" transparent opacity={.66} metalness={.78} roughness={.2} clearcoat={.7} clearcoatRoughness={.22} />
-          <Edges color="#8fd8bb" threshold={18} />
+          <icosahedronGeometry args={[.76, quality === "high" ? 3 : 2]} />
+          <meshPhysicalMaterial color="#070a0a" transparent opacity={.84} metalness={.82} roughness={.16} clearcoat={1} clearcoatRoughness={.16} />
+          <Edges color="#6f887e" threshold={20} />
         </mesh>
-        <mesh scale={1.42} material={auraMaterial}>
-          <icosahedronGeometry args={[.72, 3]} />
+        <mesh scale={1.38} material={auraMaterial}>
+          <icosahedronGeometry args={[.78, 3]} />
         </mesh>
-        <pointLight ref={coreLight} color="#8ff3c9" intensity={2.8} distance={5.4} decay={2} />
+        <pointLight ref={coreLight} color="#86d1b4" intensity={1.6} distance={4.6} decay={2} />
       </group>
 
       <ArchitecturalShell />
@@ -259,15 +252,15 @@ export default function BuildEngine() {
       <group ref={orbitGroup}>
         <mesh ref={ringA} rotation={[Math.PI / 2, 0, .18]}>
           <torusGeometry args={[1.38, .012, 8, quality === "low" ? 64 : 128]} />
-          <meshBasicMaterial color="#7fa796" transparent opacity={.38} />
+          <meshBasicMaterial color="#80968d" transparent opacity={.19} depthWrite={false} />
         </mesh>
         <mesh ref={ringB} rotation={[1.08, .2, -.24]}>
           <torusGeometry args={[1.68, .008, 6, quality === "low" ? 64 : 128]} />
-          <meshBasicMaterial color="#4d665d" transparent opacity={.28} />
+          <meshBasicMaterial color="#55655f" transparent opacity={.12} depthWrite={false} />
         </mesh>
         <mesh ref={ringC} rotation={[.3, -.58, .5]}>
           <torusGeometry args={[1.94, .006, 6, quality === "low" ? 64 : 160]} />
-          <meshBasicMaterial color="#64786f" transparent opacity={.2} />
+          <meshBasicMaterial color="#74867f" transparent opacity={.075} depthWrite={false} />
         </mesh>
       </group>
 
@@ -275,31 +268,24 @@ export default function BuildEngine() {
         <group key={i} position={p}>
           <mesh>
             <boxGeometry args={[.17, .17, .17]} />
-            <meshStandardMaterial color="#20292a" metalness={.88} roughness={.28} />
-            <Edges color="#52625e" />
+            <meshStandardMaterial color="#121817" metalness={.78} roughness={.38} />
+            <Edges color="#35433e" />
           </mesh>
-          <mesh ref={(node) => { nodeRefs.current[i] = node; }} position={[0, 0, .102]}>
-            <planeGeometry args={[.082, .082]} />
-            <meshBasicMaterial color={activeCapability && i % 3 === 0 ? "#d9ff5f" : "#9df5cf"} transparent opacity={.9} toneMapped={false} />
+          <mesh ref={(node) => { nodeRefs.current[i] = node; }} position={[0, 0, .12]}>
+            <sphereGeometry args={[.027, 14, 10]} />
+            <meshStandardMaterial color={activeCapability && i % 3 === 0 ? "#e4f4d2" : "#a4cdbd"} emissive={activeCapability && i % 3 === 0 ? "#bcd88d" : "#5f9d86"} emissiveIntensity={1.1} roughness={.22} metalness={.28} toneMapped={false} />
           </mesh>
         </group>
       ))}
 
       {nodes.slice(0, -1).map((p, i) => i % 2 === 0 ? (
-        <Line key={`line-${i}`} points={[p, nodes[i + 1]]} color={i % 4 === 0 ? "#9df5cf" : "#60776e"} transparent opacity={.34} lineWidth={quality === "low" ? .35 : .55} />
+        <Line key={`line-${i}`} points={[p, nodes[i + 1]]} color={i % 4 === 0 ? "#88b8a5" : "#56645f"} transparent opacity={.2} lineWidth={quality === "low" ? .35 : .55} />
       ) : null)}
-      {nodes.length > 8 && <Line points={[nodes[1], nodes[6], nodes[8]]} color="#9df5cf" transparent opacity={.3} lineWidth={.5} />}
-      {nodes.length > 9 && <Line points={[nodes[3], nodes[2], nodes[9]]} color="#d9ff5f" transparent opacity={.18} lineWidth={.42} />}
+      {nodes.length > 8 && <Line points={[nodes[1], nodes[6], nodes[8]]} color="#829d92" transparent opacity={.16} lineWidth={.5} />}
+      {nodes.length > 9 && <Line points={[nodes[3], nodes[2], nodes[9]]} color="#b9cfae" transparent opacity={.10} lineWidth={.42} />}
 
       <EnergyPackets />
       <DataPanes />
-
-      <mesh ref={scan} position={[0, -1.4, .9]} rotation={[Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[4.2, 4.2]} />
-        <meshBasicMaterial color="#9df5cf" transparent opacity={.05} side={THREE.DoubleSide} depthWrite={false} blending={THREE.AdditiveBlending} />
-      </mesh>
-
-      <gridHelper args={[5.8, 18, "#26443a", "#16241f"]} position={[0, -2.18, -.7]} rotation={[0, 0, .02]} />
     </group>
   );
 }

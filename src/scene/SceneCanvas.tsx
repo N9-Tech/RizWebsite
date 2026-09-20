@@ -4,10 +4,26 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Component, Suspense, useCallback, useEffect, useRef, useState, type ErrorInfo, type ReactNode } from "react";
 import * as THREE from "three";
 import BuildEngine from "./BuildEngine";
+import CinematicEnvironment from "./CinematicEnvironment";
 import ParticleField from "./ParticleField";
 import { useQualityTier } from "@/hooks/useQualityTier";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useExperience } from "./ExperienceContext";
+
+function SceneProgressSmoother() {
+  const { progressRef, targetProgressRef } = useExperience();
+
+  useFrame((_, delta) => {
+    progressRef.current = THREE.MathUtils.damp(
+      progressRef.current,
+      targetProgressRef.current,
+      5.4,
+      Math.min(delta, .05),
+    );
+  });
+
+  return null;
+}
 
 function CameraRig() {
   const { camera } = useThree();
@@ -16,44 +32,77 @@ function CameraRig() {
   const look = useRef(new THREE.Vector3());
 
   useFrame((state, delta) => {
-    const progress = progressRef.current;
-    const pointerScale = quality === "low" ? .035 : .09;
-    const resolve = THREE.MathUtils.smoothstep(progress, .84, 1);
+    const p = progressRef.current;
+    const pointerScale = quality === "low" ? .025 : .075;
+    const open = THREE.MathUtils.smoothstep(p, .08, .34);
+    const inspect = THREE.MathUtils.smoothstep(p, .27, .58);
+    const resolve = THREE.MathUtils.smoothstep(p, .82, 1);
+
     target.current.set(
-      progress * .28 + state.pointer.x * pointerScale,
-      .05 + progress * .14 + state.pointer.y * pointerScale * .55,
-      6.05 - progress * .56 + resolve * .22
+      -.12 + p * .46 + state.pointer.x * pointerScale,
+      .12 + open * .08 - resolve * .14 + state.pointer.y * pointerScale * .55,
+      6.45 - open * .62 + inspect * .22 + resolve * .58,
     );
-    camera.position.lerp(target.current, Math.min(1, delta * 2.8));
-    look.current.set(.82 + progress * .18 + state.pointer.x * .04, progress * .04 + state.pointer.y * .025, 0);
+
+    camera.position.x = THREE.MathUtils.damp(camera.position.x, target.current.x, 3.2, delta);
+    camera.position.y = THREE.MathUtils.damp(camera.position.y, target.current.y, 3.0, delta);
+    camera.position.z = THREE.MathUtils.damp(camera.position.z, target.current.z, 3.0, delta);
+
+    look.current.set(
+      1.18 + open * .16 - resolve * .22 + state.pointer.x * .035,
+      -.02 + inspect * .08 + state.pointer.y * .02,
+      -.08 - inspect * .18,
+    );
     camera.lookAt(look.current);
   });
+
   return null;
 }
 
 function CinematicLights() {
-  const key = useRef<THREE.PointLight>(null);
+  const key = useRef<THREE.SpotLight>(null);
   const rim = useRef<THREE.PointLight>(null);
+  const fill = useRef<THREE.PointLight>(null);
   const { progressRef, activeCapability } = useExperience();
-  useFrame((state) => {
+
+  useFrame((state, delta) => {
     const t = state.clock.getElapsedTime();
-    const progress = progressRef.current;
+    const p = progressRef.current;
+    const open = THREE.MathUtils.smoothstep(p, .1, .42);
+
     if (key.current) {
-      key.current.position.x = 2.3 + Math.sin(t * .18) * .45;
-      key.current.position.y = 2.6 + Math.cos(t * .15) * .28;
-      key.current.intensity = 2.6 + progress * 1.7 + (activeCapability ? .8 : 0);
+      key.current.position.x = THREE.MathUtils.damp(key.current.position.x, 3.5 + Math.sin(t * .12) * .28, 1.4, delta);
+      key.current.position.y = THREE.MathUtils.damp(key.current.position.y, 4.1 + Math.cos(t * .1) * .18, 1.4, delta);
+      key.current.intensity = 48 + open * 24 + (activeCapability ? 12 : 0);
     }
     if (rim.current) {
-      rim.current.position.y = -1.2 + Math.sin(t * .2) * .35;
-      rim.current.intensity = 1.0 + progress * .8;
+      rim.current.position.y = -1.0 + Math.sin(t * .14) * .2;
+      rim.current.intensity = 9 + p * 6;
+    }
+    if (fill.current) {
+      fill.current.position.x = -3.6 + Math.sin(t * .09) * .3;
+      fill.current.intensity = 4 + p * 2.4;
     }
   });
-  return <>
-    <ambientLight intensity={.19} />
-    <pointLight ref={key} position={[2.3, 2.6, 3.4]} intensity={2.8} color="#c8fce5" distance={10} decay={2} />
-    <pointLight ref={rim} position={[-3.1, -1.2, 1.5]} intensity={1.15} color="#5caa91" distance={9} decay={2} />
-    <directionalLight position={[0, 4, -2]} intensity={.32} color="#d8fff0" />
-  </>;
+
+  return (
+    <>
+      <ambientLight intensity={.08} color="#9fb2aa" />
+      <hemisphereLight args={["#9fc4b5", "#050607", .22]} />
+      <spotLight
+        ref={key}
+        position={[3.5, 4.1, 4.7]}
+        angle={.42}
+        penumbra={.86}
+        intensity={48}
+        color="#d9fff0"
+        distance={15}
+        decay={2}
+      />
+      <pointLight ref={rim} position={[-2.8, -1, 2]} intensity={9} color="#55a58a" distance={8} decay={2} />
+      <pointLight ref={fill} position={[-3.6, 1.6, -1.8]} intensity={4} color="#7d9aa0" distance={10} decay={2} />
+    </>
+  );
 }
 
 function ContextLossGuard({ onLost }: { onLost: () => void }) {
@@ -72,24 +121,32 @@ function ContextLossGuard({ onLost }: { onLost: () => void }) {
 
 function Scene({ onContextLost }: { onContextLost: () => void }) {
   const quality = useQualityTier();
+
   return (
     <Canvas
       frameloop="always"
-      dpr={quality === "high" ? [1, 1.8] : quality === "medium" ? [1, 1.45] : [1, 1.15]}
-      camera={{ position: [0, .05, 6.05], fov: 38, near: .1, far: 100 }}
-      gl={{ antialias: quality !== "low", alpha: true, powerPreference: "high-performance", stencil: false }}
+      dpr={quality === "high" ? [1, 1.7] : quality === "medium" ? [1, 1.4] : [1, 1.1]}
+      camera={{ position: [-.12, .12, 6.45], fov: 37, near: .1, far: 100 }}
+      gl={{
+        antialias: quality !== "low",
+        alpha: true,
+        powerPreference: "high-performance",
+        stencil: false,
+      }}
       onCreated={({ gl }) => {
         gl.toneMapping = THREE.ACESFilmicToneMapping;
-        gl.toneMappingExposure = 1.05;
+        gl.toneMappingExposure = .92;
         gl.outputColorSpace = THREE.SRGBColorSpace;
         gl.setClearColor(0x050607, 0);
       }}
     >
-      <fog attach="fog" args={["#050607", 6.5, 14]} />
+      <fogExp2 attach="fog" args={["#050607", .048]} />
+      <SceneProgressSmoother />
       <CinematicLights />
       <CameraRig />
       <ContextLossGuard onLost={onContextLost} />
       <Suspense fallback={null}>
+        <CinematicEnvironment />
         <BuildEngine />
         <ParticleField />
       </Suspense>
@@ -108,7 +165,9 @@ function canUseWebGL() {
   try {
     const canvas = document.createElement("canvas");
     return Boolean(canvas.getContext("webgl2") || canvas.getContext("webgl"));
-  } catch { return false; }
+  } catch {
+    return false;
+  }
 }
 
 export default function SceneCanvas() {
@@ -116,16 +175,24 @@ export default function SceneCanvas() {
   const { phase } = useExperience();
   const reduced = useReducedMotion();
   const triggerFallback = useCallback(() => setFallback(true), []);
-  useEffect(() => { if (!canUseWebGL()) triggerFallback(); }, [triggerFallback]);
+
+  useEffect(() => {
+    if (!canUseWebGL()) triggerFallback();
+  }, [triggerFallback]);
+
   const useFallback = fallback || reduced;
 
   return (
-    <div
-      className={`scene-canvas phase-${phase} ${useFallback ? "is-fallback" : ""}`}
-      aria-hidden="true"
-    >
+    <div className={`scene-canvas phase-${phase} ${useFallback ? "is-fallback" : ""}`} aria-hidden="true">
       <div className="scene-atmosphere" />
-      {!useFallback && <SceneBoundary onError={triggerFallback}><Scene onContextLost={triggerFallback} /></SceneBoundary>}
+      <div className="scene-depth-haze scene-depth-haze-a" />
+      <div className="scene-depth-haze scene-depth-haze-b" />
+      {!useFallback && (
+        <SceneBoundary onError={triggerFallback}>
+          <Scene onContextLost={triggerFallback} />
+        </SceneBoundary>
+      )}
+      <div className="scene-lens" />
       <div className="scene-vignette" />
       <div className="scene-fallback" aria-hidden="true"><div className="fallback-core" /></div>
     </div>

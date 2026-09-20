@@ -1,6 +1,7 @@
 name: Cinematic polish validation
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - cinematic-depth-polish

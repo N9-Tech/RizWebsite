@@ -1,0 +1,99 @@
+name: Cinematic polish validation
+
+on:
+  push:
+    branches:
+      - cinematic-depth-polish
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout polish branch
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Production build
+        run: npm run build
+
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Browser render QA
+        run: |
+          npm run start -- -p 3000 > /tmp/riz-next.log 2>&1 &
+          for i in {1..60}; do
+            if curl -fsS http://127.0.0.1:3000 >/dev/null; then break; fi
+            sleep 1
+          done
+          node <<'NODE'
+          const { chromium } = require('playwright');
+          (async () => {
+            const browser = await chromium.launch({
+              headless: true,
+              args: ['--no-sandbox','--disable-dev-shm-usage','--use-angle=swiftshader','--enable-webgl','--ignore-gpu-blocklist']
+            });
+            const errors = [];
+            for (const [name,width,height] of [
+              ['desktop',1440,900],
+              ['tablet',768,1024],
+              ['mobile',390,844],
+            ]) {
+              const page = await browser.newPage({ viewport: { width, height } });
+              page.on('pageerror', e => errors.push(name + ': pageerror: ' + e.message));
+              page.on('console', msg => {
+                if (msg.type() === 'error') errors.push(name + ': console: ' + msg.text());
+              });
+              await page.goto('http://127.0.0.1:3000', { waitUntil: 'networkidle' });
+              await page.waitForTimeout(1800);
+              const metrics = await page.evaluate(() => ({
+                scrollWidth: document.documentElement.scrollWidth,
+                clientWidth: document.documentElement.clientWidth,
+                h1: document.querySelectorAll('h1').length,
+                canvas: document.querySelectorAll('canvas').length,
+              }));
+              if (metrics.scrollWidth > metrics.clientWidth + 1) errors.push(name + ': horizontal overflow');
+              if (metrics.h1 !== 1) errors.push(name + ': expected one h1');
+              await page.screenshot({ path: 'qa/polish-' + name + '-hero.png', fullPage: false });
+              await page.evaluate(() => window.scrollTo(0, Math.round(document.documentElement.scrollHeight * .28)));
+              await page.waitForTimeout(1200);
+              await page.screenshot({ path: 'qa/polish-' + name + '-depth.png', fullPage: false });
+              console.log(name, metrics);
+              await page.close();
+            }
+            await browser.close();
+            if (errors.length) {
+              console.error(errors.join('\n'));
+              process.exit(1);
+            }
+          })();
+          NODE
+
+      - name: Upload browser QA
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cinematic-polish-qa
+          path: |
+            qa/polish-*.png
+            /tmp/riz-next.log
+          if-no-files-found: warn

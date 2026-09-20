@@ -65,7 +65,7 @@ jobs:
                 if (msg.type() === 'error') errors.push(name + ': console: ' + msg.text());
               });
               await page.goto('http://127.0.0.1:3000', { waitUntil: 'networkidle' });
-              await page.waitForTimeout(1800);
+              page.setDefaultTimeout(15000);\n              await page.waitForTimeout(900);
               const metrics = await page.evaluate(() => ({
                 scrollWidth: document.documentElement.scrollWidth,
                 clientWidth: document.documentElement.clientWidth,
@@ -74,10 +74,10 @@ jobs:
               }));
               if (metrics.scrollWidth > metrics.clientWidth + 1) errors.push(name + ': horizontal overflow');
               if (metrics.h1 !== 1) errors.push(name + ': expected one h1');
-              await page.screenshot({ path: 'qa/polish-' + name + '-hero.png', fullPage: false });
+              await page.screenshot({ path: 'qa/polish-' + name + '-hero.png', fullPage: false, animations: 'disabled', timeout: 15000 });
               await page.evaluate(() => window.scrollTo(0, Math.round(document.documentElement.scrollHeight * .28)));
-              await page.waitForTimeout(1200);
-              await page.screenshot({ path: 'qa/polish-' + name + '-depth.png', fullPage: false });
+              await page.waitForTimeout(700);
+              await page.screenshot({ path: 'qa/polish-' + name + '-depth.png', fullPage: false, animations: 'disabled', timeout: 15000 });
               console.log(name, metrics);
               await page.close();
             }

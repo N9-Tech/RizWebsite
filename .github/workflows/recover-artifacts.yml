@@ -1,0 +1,94 @@
+name: Recover missing artifacts
+
+on:
+  push:
+    branches:
+      - artifact-recovery
+
+permissions:
+  contents: write
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout main without workflow files
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install browser QA dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install playwright pillow
+          python -m playwright install --with-deps chromium
+
+      - name: Adapt QA runner to GitHub workspace
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path("qa/run_browser_qa.py")
+          s = p.read_text()
+          if "import os" not in s:
+              s = s.replace("from pathlib import Path\n", "from pathlib import Path\nimport os\n", 1)
+          s = s.replace(
+              "ROOT=Path('/mnt/data/theace9-final-polish/theace9-build-engine-portfolio')",
+              "ROOT=Path(os.environ['GITHUB_WORKSPACE'])"
+          )
+          s = s.replace(
+              "browser=await p.chromium.launch(executable_path='/usr/bin/chromium', headless=True, args=['--no-sandbox','--disable-dev-shm-usage','--disable-gpu-sandbox'])",
+              "browser=await p.chromium.launch(headless=True, args=['--no-sandbox','--disable-dev-shm-usage'])"
+          )
+          p.write_text(s)
+          PY
+
+      - name: Generate QA screenshots
+        run: python qa/run_browser_qa.py
+
+      - name: Generate social preview
+        run: |
+          mkdir -p public/social
+          python - <<'PY'
+          from PIL import Image
+          from pathlib import Path
+
+          src = Image.open("qa/desktop-1440-hero.png").convert("RGB")
+          target_ratio = 1200 / 630
+          ratio = src.width / src.height
+          if ratio > target_ratio:
+              crop_w = int(src.height * target_ratio)
+              left = (src.width - crop_w) // 2
+              src = src.crop((left, 0, left + crop_w, src.height))
+          else:
+              crop_h = int(src.width / target_ratio)
+              top = max(0, (src.height - crop_h) // 2)
+              src = src.crop((0, top, src.width, top + crop_h))
+          src.resize((1200, 630), Image.Resampling.LANCZOS).save(
+              Path("public/social/og.png"), optimize=True
+          )
+          PY
+
+      - name: Restore QA source and write final diff
+        run: |
+          git checkout -- qa/run_browser_qa.py
+          ROOT_COMMIT="$(git rev-list --max-parents=0 HEAD | tail -1)"
+          git diff "$ROOT_COMMIT"..HEAD -- .             ':(exclude)qa/*.png'             ':(exclude)public/social/og.png'             > qa/final.diff
+
+      - name: Commit generated artifacts to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add             public/social/og.png             qa/cinematic_qa.json             qa/final.diff             qa/desktop-1280-hero.png             qa/desktop-1280-work.png             qa/desktop-1440-hero.png             qa/desktop-1440-work.png             qa/desktop-1920-hero.png             qa/desktop-1920-work.png             qa/mobile-390-hero.png             qa/mobile-390-menu.png             qa/mobile-390-work.png             qa/mobile-430-hero.png             qa/mobile-430-menu.png             qa/mobile-430-work.png             qa/tablet-1024-hero.png             qa/tablet-1024-work.png             qa/tablet-768-hero.png             qa/tablet-768-menu.png             qa/tablet-768-work.png
+          if git diff --cached --quiet; then
+            echo "No artifact changes to commit."
+          else
+            git commit -m "Add generated QA and social assets"
+            git push origin HEAD:main
+          fi

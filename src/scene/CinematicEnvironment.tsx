@@ -66,7 +66,7 @@ function AtmosphereVolume() {
 
   return (
     <mesh position={[.7, .1, -1.8]} scale={[1.18, .92, 1.35]} material={material}>
-      <sphereGeometry args={[8.5, 32, 24]} />
+      <sphereGeometry args={[8.5, 24, 16]} />
     </mesh>
   );
 }
@@ -87,11 +87,11 @@ function LightShafts() {
   return (
     <group ref={group} position={[1.4, -.1, -3.1]} rotation={[-.18, 0, -.12]}>
       <mesh position={[1.2, 1.4, 0]} rotation={[0, 0, -.22]} scale={[1.3, 4.8, 1.3]}>
-        <coneGeometry args={[.65, 3.8, 32, 1, true]} />
+        <coneGeometry args={[.65, 3.8, 20, 1, true]} />
         <meshBasicMaterial color="#8fe6c3" transparent opacity={.018} depthWrite={false} side={THREE.DoubleSide} blending={THREE.AdditiveBlending} />
       </mesh>
       <mesh position={[-1.8, .4, -.8]} rotation={[0, 0, .16]} scale={[1.5, 5.7, 1.5]}>
-        <coneGeometry args={[.72, 4.4, 32, 1, true]} />
+        <coneGeometry args={[.72, 4.4, 20, 1, true]} />
         <meshBasicMaterial color="#6ea995" transparent opacity={.012} depthWrite={false} side={THREE.DoubleSide} blending={THREE.AdditiveBlending} />
       </mesh>
     </group>
@@ -141,7 +141,7 @@ function DistantArchitecture() {
 function DeepBokeh() {
   const points = useRef<THREE.Points>(null);
   const { quality, progressRef } = useExperience();
-  const count = quality === "high" ? 220 : quality === "medium" ? 140 : 80;
+  const count = quality === "high" ? 160 : quality === "medium" ? 96 : 48;
 
   const positions = useMemo(() => {
     let seed = 7341;

@@ -405,7 +405,7 @@ body:before{display:none}
   --ent-line:cubic-bezier(.16,1,.3,1);
   --ent-soft:cubic-bezier(.25,.8,.35,1);
   --rise:9px;
-  --hero-video-scale:calc(1.02 + var(--hero-dive)*.17);
+  --hero-art-scale:calc(1.02 + var(--hero-dive)*.17);
 }
 body{
   font-family:var(--font-sans);
@@ -519,7 +519,7 @@ body{
       calc(var(--hero-dive)*-.8vh),
       0
     )
-    scale(var(--hero-video-scale));
+    scale(var(--hero-art-scale));
   filter:
     brightness(calc(.76 + var(--hero-dive)*.13))
     saturate(calc(.88 + var(--hero-dive)*.15));
@@ -1492,8 +1492,8 @@ addEventListener("pointermove",(event)=>{
   var compact=matchMedia("(max-width:700px)").matches,
       saveData=!!(navigator.connection&&navigator.connection.saveData),
       lowPower=saveData||(navigator.hardwareConcurrency||8)<=4||(navigator.deviceMemory||8)<=4,
-      renderScale=compact?.72:(lowPower?.78:1.0),
-      fps=compact?30:(lowPower?36:45),
+      renderScale=compact?.68:(lowPower?.72:.82),
+      fps=compact?30:(lowPower?30:36),
       interval=1000/fps,
       visible=true,
       running=false,
@@ -1505,10 +1505,12 @@ addEventListener("pointermove",(event)=>{
       dirty=true;
 
   function resize(){
-    var rect=canvas.getBoundingClientRect(),
-        w=Math.max(1,Math.round(rect.width*renderScale)),
-        h=Math.max(1,Math.round(rect.height*renderScale)),
-        maxPixels=compact?650000:1550000,
+    var stage=canvas.parentElement,
+        cssW=stage&&stage.clientWidth?stage.clientWidth:innerWidth,
+        cssH=stage&&stage.clientHeight?stage.clientHeight:innerHeight,
+        w=Math.max(1,Math.round(cssW*renderScale)),
+        h=Math.max(1,Math.round(cssH*renderScale)),
+        maxPixels=compact?560000:1050000,
         pixels=w*h;
     if(pixels>maxPixels){
       var k=Math.sqrt(maxPixels/pixels);w=Math.max(1,Math.round(w*k));h=Math.max(1,Math.round(h*k));

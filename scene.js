@@ -330,29 +330,29 @@ function startScene(canvas){
 
     const opening=smoothstep(.16,.38,progress);
     const inspect=smoothstep(.34,.58,progress);
-    const dive=smoothstep(.48,.83,progress);
+    const dive=smoothstep(.54,.84,progress);
     const resolve=smoothstep(.83,1,progress);
     const burst=smoothstep(.6,.82,progress)*(1-resolve);
-    const desktopOffset=innerWidth>1100?1.42:innerWidth>760?.78:.18;
+    const desktopOffset=innerWidth>1100?1.68:innerWidth>760?.88:.18;
 
-    const zoomZ=lerp(6.35,1.58,dive);
-    const cameraZ=lerp(zoomZ,3.55,resolve);
+    const zoomZ=lerp(6.35,2.45,dive);
+    const cameraZ=lerp(zoomZ,6.05,resolve);
     const cameraX=.03+dive*.34-resolve*.18+pointerX*.055;
     const cameraY=.04+inspect*.16+dive*.18-resolve*.08+pointerY*.045;
     target.set(cameraX,cameraY,cameraZ);
     camera.position.lerp(target,Math.min(1,delta*4.6));
 
-    camera.fov=lerp(camera.fov,40-dive*7+resolve*5,Math.min(1,delta*3.8));
+    camera.fov=lerp(camera.fov,40-dive*5+resolve*4,Math.min(1,delta*3.8));
     camera.updateProjectionMatrix();
 
-    const resolvedX=desktopOffset*.72;
-    const rootX=lerp(desktopOffset,.34,dive);
+    const resolvedX=desktopOffset*1.28;
+    const rootX=lerp(desktopOffset,.58,dive);
     root.position.x=lerp(root.position.x,lerp(rootX,resolvedX,resolve)+pointerX*.08,Math.min(1,delta*4));
     root.position.y=lerp(root.position.y,pointerY*.055+dive*.12-resolve*.2,Math.min(1,delta*4));
     root.rotation.y=lerp(root.rotation.y,progress*1.28+pointerX*.07+Math.sin(t*.14)*.026,Math.min(1,delta*3.8));
     root.rotation.x=lerp(root.rotation.x,-.08+progress*.34-pointerY*.035,Math.min(1,delta*3.8));
     root.rotation.z=lerp(root.rotation.z,Math.sin(t*.11)*.014+burst*.08,Math.min(1,delta*3.8));
-    root.scale.setScalar(1+dive*.52-resolve*.16);
+    root.scale.setScalar(1+dive*.28-resolve*.62);
 
     const pulse=1+Math.sin(t*1.45)*.026+(activeCapability?.05:0)+inspect*.035+burst*.09;
     inner.scale.setScalar(pulse);
@@ -446,7 +446,7 @@ function startScene(canvas){
     particles.position.y=Math.sin(t*.11)*.055;
     particles.material.opacity=.2+dive*.12-resolve*.045;
 
-    const lookX=lerp(.86,.34,dive)+resolve*.56+pointerX*.035;
+    const lookX=lerp(1.02,.48,dive)+resolve*.92+pointerX*.035;
     const lookY=progress*.08+dive*.08-resolve*.06+pointerY*.02;
     look.set(lookX,lookY,0);
     camera.lookAt(look);

@@ -226,3 +226,53 @@ addEventListener("pointermove",(event)=>{
     });
   }
 },{passive:true});
+
+/* Cinematic video: respect reduced motion and suspend decoding off the hero. */
+(function(){
+  var q=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)");
+  var v=document.querySelector("video.hero-art");
+  var hero=document.querySelector(".hero");
+  if(!v)return;
+  var visible=true;
+  function sync(){
+    if((q&&q.matches)||!visible){
+      v.pause();
+      return;
+    }
+    var p=v.play();
+    if(p&&p.catch)p.catch(function(){});
+  }
+  sync();
+  if(q){
+    if(q.addEventListener)q.addEventListener("change",sync);
+    else if(q.addListener)q.addListener(sync);
+  }
+  if(hero&&"IntersectionObserver" in window){
+    var observer=new IntersectionObserver(function(entries){
+      visible=entries[0]&&entries[0].isIntersecting;
+      sync();
+    },{rootMargin:"120px 0px 120px 0px",threshold:0});
+    observer.observe(hero);
+  }
+})();
+
+/* Entrance CSS runs once. Retire it so responsive changes cannot replay it. */
+(function(){
+  var root=document.documentElement;
+  var target=document.querySelector(".hero-features li:last-child");
+  var timer=0;
+  function done(){
+    if(timer)clearTimeout(timer);
+    if(target)target.removeEventListener("animationend",onEnd);
+    root.classList.add("is-entered");
+  }
+  function onEnd(event){
+    if(event.animationName==="ref-lift")done();
+  }
+  if(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+    done();
+    return;
+  }
+  if(target)target.addEventListener("animationend",onEnd);
+  timer=setTimeout(done,4000);
+})();

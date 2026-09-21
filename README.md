@@ -2,20 +2,24 @@
 
 High-quality static portfolio site for **theace9**.
 
-## Runtime
+## Production architecture
 
-The production site is intentionally browser-native:
+The site is intentionally browser-native:
 
-- HTML
-- CSS
-- Vanilla JavaScript
-- Three.js loaded directly from a pinned CDN URL
+- semantic HTML
+- modern CSS
+- vanilla JavaScript
+- hardware-decoded H.264 hero video
+- Sora variable typography
+- browser-native animation and observer APIs
 
-There is **no npm**, package manager, framework runtime, bundler, compilation step, or generated build directory.
+There is **no npm**, package manager, JavaScript framework, CSS framework, bundler, compilation step, generated build directory, or runtime WebGL dependency.
+
+The homepage is deliberately packaged as a **single self-contained `index.html`** for its CSS and JavaScript. The cinematic video, poster and variable font remain external media/font assets. Case-study pages continue to use the small shared `style.css`, `static-overrides.css` and `app.js` files.
 
 ## Local preview
 
-Any static HTTP server works. For example:
+Any static HTTP server works:
 
 ```bash
 python3 -m http.server 8080
@@ -23,29 +27,26 @@ python3 -m http.server 8080
 
 Then open `http://localhost:8080`.
 
-Opening `index.html` directly also works for most of the site, but an HTTP server is preferable for consistent module loading.
-
 ## GitHub Pages
 
-Use repository **Settings → Pages** and choose:
+Use repository **Settings → Pages**:
 
 - Source: **Deploy from a branch**
 - Branch: **main**
 - Folder: **/(root)**
 
-The repository includes `.nojekyll`, so GitHub Pages serves the committed files directly.
+The repository includes `.nojekyll`, so GitHub Pages serves the committed files directly without a build.
 
 ## Structure
 
 ```
-index.html
-style.css
-static-overrides.css
-app.js
-scene.js
+index.html              # self-contained production homepage
+style.css               # shared case-study styles
+static-overrides.css    # shared case-study overrides
+app.js                  # shared case-study runtime
 images/
 social/
 work/
 ```
 
-`scene.js` is the native Three.js cinematic layer. If WebGL is unavailable or reduced motion is requested, the CSS visual fallback remains available.
+The homepage video pauses for `prefers-reduced-motion` and when the hero is outside the viewport. Scroll choreography is implemented with lightweight CSS variables and vanilla JavaScript.

@@ -212,22 +212,22 @@ The website must remain coherent if:
 
 ## 5.1 Application stack
 
-Use browser-native technology:
+Production uses browser-native technology only:
 
 - semantic HTML5
 - modern CSS
-- vanilla JavaScript using ES modules
-- Three.js loaded from a pinned CDN URL for the WebGL scene only
-- native Web Animations API where scripted animation is required
-- `requestAnimationFrame` for frame-synchronised scene and scroll work
-- `IntersectionObserver` / `ResizeObserver` where appropriate
-- system fonts or self-hosted web fonts
+- vanilla JavaScript
+- the homepage CSS and JavaScript embedded directly in `index.html`
+- hardware-decoded H.264/MP4 video as the cinematic hero art layer
+- a poster still from the same footage for zero-flash first paint
+- Sora variable typography
+- native CSS animations and transitions
+- `requestAnimationFrame` only while scroll interpolation is settling
+- `IntersectionObserver` for visibility-based media and reveal work
 
-Do not add npm, a package manager, a bundler, a compilation step, a JavaScript framework, a CSS framework, a component framework, or a generated build directory.
+Do not add npm, a package manager, a bundler, a compilation step, Three.js/WebGL, a JavaScript framework, a CSS framework, a component framework, a generated build directory, or external JavaScript dependencies for the production homepage.
 
-Do not add a UI kit.
-
-The repository root must remain directly deployable by any static web server.
+The repository root must remain directly deployable by an ordinary static web server.
 
 ## 5.2 Rendering split
 
@@ -239,52 +239,48 @@ Use for:
 - buttons
 - project cards
 - metadata
-- badges
 - menus
-- filters
 - contact UI
 - footer
 - accessibility
 - progressive enhancement
+- scroll progress state
 
-### WebGL / Three.js
-Use for:
+### Cinematic media
+Use the supplied looping video for:
 
-- central Build Engine
-- particles
-- spatial lighting
-- depth
-- subtle floating elements
-- camera motion
-- scroll-reactive scene changes
+- hero atmosphere
+- depth and motion
+- gold/blue light language
+- centre flare
+- the main visual focal point
+
+The video is presentation-only, muted, looping, `playsinline`, poster-backed, and paused when reduced motion is requested or when the hero is outside the viewport.
 
 ### CSS
 Use for:
 
-- borders
-- noise overlays
-- glass panels
+- veil/scrim treatment
+- scroll-linked video zoom
+- glass controls
 - typography
-- simple transforms
-- gradients
-- masks
-- button states
+- borders and hairlines
 - responsive layout
-- transitions and keyframe effects that do not require JavaScript
+- gradients and masks
+- entrance choreography
+- section transitions
 
 ### Native motion controller
-Use a single, lightweight JavaScript controller for:
+Use one lightweight JavaScript controller for:
 
-- timeline choreography
-- scroll-linked scene progress
-- text entrances
-- project transitions
-- camera/scene state coordination
-- section reveals
+- smoothed hero scroll progress
+- text exit
+- video zoom variables
+- project-media parallax
+- page progress
+- reveal scheduling
 
-Prefer CSS, the Web Animations API and browser observers before writing custom animation machinery.
-
-Do not use Three.js for effects that CSS can render efficiently.
+Do not use a permanent JavaScript animation loop when the page is idle.
 
 ---
 
@@ -294,85 +290,55 @@ Do not use Three.js for effects that CSS can render efficiently.
 
 Target on a modern desktop:
 
-- LCP under 2.5 seconds on a production connection
+- LCP under 2.5 seconds on a production connection where practical
 - CLS under 0.1
 - INP under 200 ms where practical
 - stable 60 fps during normal DOM scrolling
-- WebGL scene should aim for 60 fps and remain acceptable around 45+ fps on mid-range hardware
+- no continuous renderer after the hero has left the viewport
 
 Mobile:
 
-- prioritize stable interaction over graphical complexity
-- reduce particle counts
-- reduce post-processing
-- reduce DPR
-- disable nonessential scene layers
+- prioritize stable interaction over decorative complexity
+- avoid fixed blur filters and heavy backdrop compositing
+- keep pointer-only effects disabled on coarse pointers
+- keep scroll updates passive and RAF-throttled
+- pause video when it is no longer visible
 
-## 6.2 WebGL constraints
+## 6.2 Video and compositor constraints
 
-Desktop DPR:
+The cinematic hero should:
 
-```ts
-Math.min(window.devicePixelRatio, 1.75)
-```
+- use the authored 1920×1080 H.264 MP4 directly
+- use the matching poster frame before playback
+- use `object-fit: cover`
+- animate only compositor-friendly transform/opacity/filter values
+- keep filter effects restrained
+- avoid canvas/WebGL duplication behind the video
+- pause when the hero leaves the viewport
+- pause at the first frame for `prefers-reduced-motion: reduce`
 
-Mobile DPR:
+Large blur filters, fixed noise overlays and unnecessary backdrop filtering should not be used during scroll.
 
-```ts
-Math.min(window.devicePixelRatio, 1.25)
-```
+## 6.3 Adaptive behaviour
 
-Recommended:
+Desktop:
+- full video motion
+- cinematic scroll zoom
+- full entrance sequence
+- pointer glow only on fine-pointer devices
 
-- one persistent Canvas
-- no more than one heavy post-processing chain
-- compressed GLB
-- Draco or Meshopt compression where beneficial
-- KTX2/Basis textures if custom textures are used
-- 1K textures by default
-- 2K only for a surface that visibly needs it
-- instancing for repeated geometry
-- no unnecessary shadow-casting lights
-- baked/emissive detail where possible
+Mobile/tablet:
+- same authored video with stronger readability veil
+- CSS-only checkbox menu
+- 44px minimum tap targets
+- slightly shorter scroll chapter
+- no pointer glow
 
-## 6.3 Adaptive quality
-
-Create quality tiers:
-
-```ts
-type QualityTier = "high" | "medium" | "low" | "fallback"
-```
-
-Decision inputs:
-
-- viewport size
-- device memory if available
-- hardware concurrency
-- reduced-motion setting
-- measured frame rate during first few seconds
-
-### High
-- full particle layer
-- subtle bloom
-- reflections
-- full scene detail
-
-### Medium
-- fewer particles
-- reduced DPR
-- simplified reflections
-
-### Low
-- basic model
-- minimal particles
-- no expensive post-processing
-- static lighting
-
-### Fallback
-- rendered poster image/video
-- no live 3D
-
-Do not show the user a quality selector unless required for debugging.
+Reduced motion:
+- video paused on its first frame
+- entrance animations disabled
+- scroll-linked transforms disabled
+- content remains fully readable and usable
 
 ---
 

@@ -916,3 +916,17 @@ body{
   .hero-scroll-hint,.scene-status{display:none}
   .capabilities{margin-top:0;padding-top:clamp(110px,13vw,220px)}
 }
+
+/* Reference-pass QA corrections */
+@media(max-width:1023px){
+  .navpanel>.header-cta{display:flex}
+}
+@media(min-width:1024px){
+  .capabilities{padding-top:calc(clamp(110px,13vw,220px) + 18svh)}
+}
+@media(min-width:641px) and (max-width:1023px){
+  .capabilities{padding-top:calc(clamp(105px,13vw,190px) + 16svh)}
+}
+@media(max-width:640px){
+  .capabilities{padding-top:calc(96px + 10svh)}
+}

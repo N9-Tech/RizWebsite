@@ -1,0 +1,31 @@
+name: Temporary procedural visual QA
+on:
+  push:
+    branches: [procedural-webgl-hero]
+permissions:
+  contents: read
+jobs:
+  visual-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Install browser runtime
+        run: |
+          python -m pip install --disable-pip-version-check playwright
+          python -m playwright install --with-deps chromium
+      - name: Serve
+        run: |
+          python -m http.server 4173 >/tmp/riz-http.log 2>&1 &
+          sleep 2
+      - name: Capture WebGL visual states
+        run: python qa/visual_qa.py
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: riz-procedural-visual-qa
+          path: qa_artifacts/
+          if-no-files-found: error

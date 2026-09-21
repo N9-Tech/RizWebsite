@@ -212,28 +212,26 @@ The website must remain coherent if:
 
 ## 5.1 Application stack
 
-Use:
+Use browser-native technology:
 
-- Next.js
-- React
-- TypeScript
-- Tailwind CSS
-- GSAP
-- GSAP ScrollTrigger
-- Three.js
-- `@react-three/fiber`
-- `@react-three/drei`
-- Lenis only if testing proves it improves the experience
-- Lucide icons
-- next/font or self-hosted web fonts
+- semantic HTML5
+- modern CSS
+- vanilla JavaScript using ES modules
+- Three.js loaded from a pinned CDN URL for the WebGL scene only
+- native Web Animations API where scripted animation is required
+- `requestAnimationFrame` for frame-synchronised scene and scroll work
+- `IntersectionObserver` / `ResizeObserver` where appropriate
+- system fonts or self-hosted web fonts
 
-Do not introduce a component framework unless it solves a real requirement.
+Do not add npm, a package manager, a bundler, a compilation step, a JavaScript framework, a CSS framework, a component framework, or a generated build directory.
 
-Do not use a massive UI kit.
+Do not add a UI kit.
+
+The repository root must remain directly deployable by any static web server.
 
 ## 5.2 Rendering split
 
-### DOM / React
+### DOM / vanilla JavaScript
 Use for:
 
 - navigation
@@ -247,8 +245,9 @@ Use for:
 - contact UI
 - footer
 - accessibility
+- progressive enhancement
 
-### WebGL
+### WebGL / Three.js
 Use for:
 
 - central Build Engine
@@ -271,16 +270,19 @@ Use for:
 - masks
 - button states
 - responsive layout
+- transitions and keyframe effects that do not require JavaScript
 
-### GSAP
-Use for:
+### Native motion controller
+Use a single, lightweight JavaScript controller for:
 
 - timeline choreography
-- pinned scroll scenes
+- scroll-linked scene progress
 - text entrances
 - project transitions
 - camera/scene state coordination
 - section reveals
+
+Prefer CSS, the Web Animations API and browser observers before writing custom animation machinery.
 
 Do not use Three.js for effects that CSS can render efficiently.
 
@@ -730,7 +732,7 @@ Never make the user chase moving UI.
 
 # 13. Hero Scroll Timeline
 
-Use one GSAP master timeline tied to ScrollTrigger.
+Use one native scroll-progress controller driven by requestAnimationFrame, with scroll input smoothed before it changes the scene.
 
 Approximate phases:
 

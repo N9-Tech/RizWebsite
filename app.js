@@ -152,7 +152,7 @@ function updateMotion(){
   const p=clamp(smoothScroll/heroRange);
   const exit=smoothstep(.28,.92,p);
   const dive=smoothstep(.48,.84,p);
-  const resolve=smoothstep(.84,1,p);
+  const resolve=smoothstep(.74,.95,p);
   const pageMax=Math.max(1,document.documentElement.scrollHeight-viewH);
   const pageProgress=clamp(smoothScroll/pageMax);
 

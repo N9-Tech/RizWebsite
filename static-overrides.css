@@ -294,3 +294,12 @@ body:before{
   .console{min-height:520px}
   .console-main pre{min-height:365px}
 }
+
+/* Transition polish */
+.capabilities{
+  background:linear-gradient(180deg,rgba(5,6,7,.16) 0%,rgba(5,6,7,.76) 17%,rgba(5,6,7,.96) 38%,#050607 66%);
+}
+.work-section{padding-top:clamp(100px,10vw,180px)}
+@media(max-width:767px){
+  .work-section{padding-top:86px}
+}

@@ -362,12 +362,12 @@ function startScene(canvas){
     const opening=smoothstep(.16,.38,progress);
     const inspect=smoothstep(.34,.58,progress);
     const dive=smoothstep(.54,.84,progress);
-    const resolve=smoothstep(.83,1,progress);
-    const burst=smoothstep(.6,.82,progress)*(1-resolve);
+    const resolve=smoothstep(.74,.95,progress);
+    const burst=smoothstep(.58,.78,progress)*(1-resolve);
     const desktopOffset=innerWidth>1100?2.02:innerWidth>760?1.02:.24;
 
     const zoomZ=lerp(6.35,2.45,dive);
-    const cameraZ=lerp(zoomZ,6.05,resolve);
+    const cameraZ=lerp(zoomZ,6.28,resolve);
     const cameraX=.03+dive*.34-resolve*.18+pointerX*.055;
     const cameraY=.04+inspect*.16+dive*.18-resolve*.08+pointerY*.045;
     target.set(cameraX,cameraY,cameraZ);
@@ -386,7 +386,7 @@ function startScene(canvas){
     root.rotation.y=lerp(root.rotation.y,progress*1.28+pointerX*.07+Math.sin(t*.14)*.026,Math.min(1,delta*3.8));
     root.rotation.x=lerp(root.rotation.x,-.08+progress*.34-pointerY*.035,Math.min(1,delta*3.8));
     root.rotation.z=lerp(root.rotation.z,Math.sin(t*.11)*.014+burst*.08,Math.min(1,delta*3.8));
-    root.scale.setScalar(.92+dive*.3-resolve*.54);
+    root.scale.setScalar(.92+dive*.25-resolve*.54);
 
     const pulse=1+Math.sin(t*1.45)*.026+(activeCapability?.05:0)+inspect*.035+burst*.09;
     inner.scale.setScalar(pulse);

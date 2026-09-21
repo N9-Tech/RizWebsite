@@ -25,9 +25,17 @@ if(!canvas||reducedMotion||!webglAvailable()){
 }
 
 function startScene(canvas){
+  const compact=matchMedia("(max-width: 700px)").matches;
+  const saveData=Boolean(navigator.connection&&navigator.connection.saveData);
+  const lowPower=saveData||(navigator.hardwareConcurrency||8)<=4||(navigator.deviceMemory||8)<=4;
+  const quality=compact?"low":lowPower||innerWidth<1200?"medium":"high";
+  const maxPixelRatio=quality==="high"?1.5:quality==="medium"?1.2:1;
+  const targetFps=quality==="low"?30:quality==="medium"?45:60;
+  const frameInterval=1000/targetFps;
+
   const renderer=new THREE.WebGLRenderer({
     canvas,
-    antialias:devicePixelRatio<=2,
+    antialias:quality==="high",
     alpha:true,
     powerPreference:"high-performance",
     stencil:false
@@ -58,7 +66,7 @@ function startScene(canvas){
   scene.add(topLight);
 
   const inner=new THREE.Mesh(
-    new THREE.IcosahedronGeometry(.63,devicePixelRatio>1.3?4:2),
+    new THREE.IcosahedronGeometry(.63,quality==="high"?3:2),
     new THREE.MeshStandardMaterial({
       color:"#b8ffe1",
       emissive:"#65e6b3",
@@ -125,7 +133,7 @@ function startScene(canvas){
     blending:THREE.AdditiveBlending,
     toneMapped:false
   });
-  const aura=new THREE.Mesh(new THREE.IcosahedronGeometry(.72,3),auraMaterial);
+  const aura=new THREE.Mesh(new THREE.IcosahedronGeometry(.72,quality==="low"?2:3),auraMaterial);
   aura.scale.setScalar(1.44);
   root.add(aura);
 
@@ -155,21 +163,24 @@ function startScene(canvas){
 
   const ringGroup=new THREE.Group();
   root.add(ringGroup);
-  const ringA=ring(1.38,.012,"#7fa796",.42,128);
+  const ringSegments=quality==="high"?112:quality==="medium"?80:56;
+  const ringA=ring(1.38,.012,"#7fa796",.42,ringSegments);
   ringA.rotation.set(Math.PI/2,0,.18);
-  const ringB=ring(1.68,.008,"#4d665d",.3,128);
+  const ringB=ring(1.68,.008,"#4d665d",.3,ringSegments);
   ringB.rotation.set(1.08,.2,-.24);
-  const ringC=ring(1.94,.006,"#64786f",.23,160);
+  const ringC=ring(1.94,.006,"#64786f",.23,ringSegments+16);
   ringC.rotation.set(.3,-.58,.5);
-  const ringD=ring(2.28,.005,"#9df5cf",.09,192);
+  const ringD=ring(2.28,.005,"#9df5cf",.09,ringSegments+32);
   ringD.rotation.set(1.42,.22,-.38);
   ringGroup.add(ringA,ringB,ringC,ringD);
 
-  const nodePositions=[
+  const allNodePositions=[
     [-1.55,.8,.25],[-1.35,-.72,.5],[-.45,1.35,-.2],[.4,-1.35,.15],
     [1.48,.76,.1],[1.62,-.42,-.35],[.75,1.42,.4],[-.78,-1.4,-.35],
     [1.95,.15,.2],[-1.92,.1,-.2],[1.05,-.96,.48],[-1.03,.1,.82]
   ];
+  const nodeLimit=quality==="low"?8:quality==="medium"?10:12;
+  const nodePositions=allNodePositions.slice(0,nodeLimit);
   const nodes=nodePositions.map((position,i)=>{
     const group=new THREE.Group();
     group.position.fromArray(position);
@@ -192,11 +203,12 @@ function startScene(canvas){
   for(let i=0;i<nodePositions.length-1;i+=2){
     lines.add(lineBetween(nodePositions[i],nodePositions[i+1],i%4===0?"#9df5cf":"#60776e",.36));
   }
-  lines.add(polyLine([nodePositions[1],nodePositions[6],nodePositions[8]],"#9df5cf",.31));
-  lines.add(polyLine([nodePositions[3],nodePositions[2],nodePositions[9]],"#d9ff5f",.2));
+  if(nodePositions.length>8)lines.add(polyLine([nodePositions[1],nodePositions[6],nodePositions[8]],"#9df5cf",.31));
+  if(nodePositions.length>9)lines.add(polyLine([nodePositions[3],nodePositions[2],nodePositions[9]],"#d9ff5f",.2));
   root.add(lines);
 
-  const packets=Array.from({length:11},(_,i)=>{
+  const packetCount=quality==="high"?9:quality==="medium"?7:6;
+  const packets=Array.from({length:packetCount},(_,i)=>{
     const mesh=new THREE.Mesh(
       new THREE.OctahedronGeometry(i%3===0?.04:.026,0),
       new THREE.MeshBasicMaterial({color:i%4===0?"#d9ff5f":"#9df5cf",transparent:true,opacity:.86,toneMapped:false})
@@ -233,13 +245,14 @@ function startScene(canvas){
   scan.rotation.x=Math.PI/2;
   root.add(scan);
 
-  const grid=new THREE.GridHelper(6.4,20,"#26443a","#16241f");
+  const grid=new THREE.GridHelper(6.4,quality==="low"?12:18,"#26443a","#16241f");
   grid.position.set(0,-2.25,-.8);
   grid.rotation.z=.02;
   root.add(grid);
 
   const tunnel=new THREE.Group();
-  const tunnelFrames=Array.from({length:7},(_,i)=>{
+  const tunnelCount=quality==="high"?7:quality==="medium"?6:5;
+  const tunnelFrames=Array.from({length:tunnelCount},(_,i)=>{
     const frame=octagonFrame(2.05+i*.22,1.02-i*.73,i===0?"#9df5cf":"#577269",.11-i*.008);
     frame.userData.baseZ=1.02-i*.73;
     frame.rotation.z=i*.17;
@@ -248,7 +261,7 @@ function startScene(canvas){
   });
   root.add(tunnel);
 
-  const count=innerWidth>1200?620:innerWidth>700?360:160;
+  const count=quality==="high"?400:quality==="medium"?240:100;
   const particlePositions=new Float32Array(count*3);
   let seed=1337;
   const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
@@ -281,36 +294,47 @@ function startScene(canvas){
   let progress=0;
   let activeCapability=false;
   let viewportHeight=innerHeight;
+  let raf=0;
+  let lastFrame=0;
+  const startTime=performance.now();
   const target=new THREE.Vector3();
   const look=new THREE.Vector3();
-  const clock=new THREE.Clock();
+
+  function ensureAnimation(){
+    if(!raf&&!document.hidden)raf=requestAnimationFrame(animate);
+  }
 
   addEventListener("pointermove",(event)=>{
     if(event.pointerType==="touch")return;
     pointerX=(event.clientX/innerWidth)*2-1;
     pointerY=-(event.clientY/innerHeight)*2+1;
+    if(scrollY<viewportHeight*1.75)ensureAnimation();
   },{passive:true});
 
   document.querySelectorAll(".cap-row").forEach((row)=>{
-    row.addEventListener("pointerenter",()=>{activeCapability=true;});
-    row.addEventListener("pointerleave",()=>{activeCapability=false;});
-    row.addEventListener("focus",()=>{activeCapability=true;});
-    row.addEventListener("blur",()=>{activeCapability=false;});
+    row.addEventListener("pointerenter",()=>{activeCapability=true;ensureAnimation();});
+    row.addEventListener("pointerleave",()=>{activeCapability=false;ensureAnimation();});
+    row.addEventListener("focus",()=>{activeCapability=true;ensureAnimation();});
+    row.addEventListener("blur",()=>{activeCapability=false;ensureAnimation();});
   });
 
   function updateScroll(){
     const range=Math.max(1,viewportHeight*1.55);
-    targetProgress=clamp(scrollY/range);
+    targetProgress=window.__rizMotion?window.__rizMotion.heroProgress:clamp(scrollY/range);
+    ensureAnimation();
   }
   addEventListener("scroll",updateScroll,{passive:true});
   updateScroll();
 
   function resize(){
-    const width=innerWidth;
     viewportHeight=innerHeight;
-    renderer.setPixelRatio(Math.min(devicePixelRatio,width<700?1.2:1.8));
-    renderer.setSize(width,viewportHeight,false);
-    camera.aspect=width/viewportHeight;
+    const parent=canvas.parentElement;
+    const rect=parent?parent.getBoundingClientRect():{width:innerWidth,height:innerHeight};
+    const renderWidth=Math.max(1,Math.round(rect.width||innerWidth));
+    const renderHeight=Math.max(1,Math.round(rect.height||innerHeight));
+    renderer.setPixelRatio(Math.min(devicePixelRatio,maxPixelRatio));
+    renderer.setSize(renderWidth,renderHeight,false);
+    camera.aspect=renderWidth/renderHeight;
     camera.updateProjectionMatrix();
     updateScroll();
   }
@@ -323,17 +347,24 @@ function startScene(canvas){
     document.documentElement.classList.add("webgl-fallback");
   });
 
-  function animate(){
-    const delta=Math.min(.05,clock.getDelta());
-    const t=clock.elapsedTime;
-    progress=damp(progress,targetProgress,6.4,delta);
+  function animate(now){
+    raf=0;
+    if(lastFrame&&now-lastFrame<frameInterval*.92){
+      raf=requestAnimationFrame(animate);
+      return;
+    }
+    const delta=Math.min(.05,lastFrame?(now-lastFrame)/1000:1/targetFps);
+    lastFrame=now;
+    const t=(now-startTime)/1000;
+    if(window.__rizMotion)targetProgress=window.__rizMotion.heroProgress;
+    progress=damp(progress,targetProgress,6.8,delta);
 
     const opening=smoothstep(.16,.38,progress);
     const inspect=smoothstep(.34,.58,progress);
     const dive=smoothstep(.54,.84,progress);
     const resolve=smoothstep(.83,1,progress);
     const burst=smoothstep(.6,.82,progress)*(1-resolve);
-    const desktopOffset=innerWidth>1100?1.68:innerWidth>760?.88:.18;
+    const desktopOffset=innerWidth>1100?2.02:innerWidth>760?1.02:.24;
 
     const zoomZ=lerp(6.35,2.45,dive);
     const cameraZ=lerp(zoomZ,6.05,resolve);
@@ -342,8 +373,11 @@ function startScene(canvas){
     target.set(cameraX,cameraY,cameraZ);
     camera.position.lerp(target,Math.min(1,delta*4.6));
 
-    camera.fov=lerp(camera.fov,40-dive*5+resolve*4,Math.min(1,delta*3.8));
-    camera.updateProjectionMatrix();
+    const nextFov=40-dive*5+resolve*4;
+    if(Math.abs(camera.fov-nextFov)>.015){
+      camera.fov=lerp(camera.fov,nextFov,Math.min(1,delta*3.8));
+      camera.updateProjectionMatrix();
+    }
 
     const resolvedX=desktopOffset*1.28;
     const rootX=lerp(desktopOffset,.58,dive);
@@ -352,7 +386,7 @@ function startScene(canvas){
     root.rotation.y=lerp(root.rotation.y,progress*1.28+pointerX*.07+Math.sin(t*.14)*.026,Math.min(1,delta*3.8));
     root.rotation.x=lerp(root.rotation.x,-.08+progress*.34-pointerY*.035,Math.min(1,delta*3.8));
     root.rotation.z=lerp(root.rotation.z,Math.sin(t*.11)*.014+burst*.08,Math.min(1,delta*3.8));
-    root.scale.setScalar(1+dive*.28-resolve*.62);
+    root.scale.setScalar(.92+dive*.3-resolve*.54);
 
     const pulse=1+Math.sin(t*1.45)*.026+(activeCapability?.05:0)+inspect*.035+burst*.09;
     inner.scale.setScalar(pulse);
@@ -455,9 +489,17 @@ function startScene(canvas){
     scene.fog.far=14-dive*5.2+resolve*3.1;
 
     renderer.render(scene,camera);
-    requestAnimationFrame(animate);
+
+    const motionPending=window.__rizMotion?Math.abs(scrollY-window.__rizMotion.scrollY)>1:false;
+    const heroLive=scrollY<viewportHeight*1.72&&targetProgress<.995;
+    const unsettled=Math.abs(progress-targetProgress)>.0015;
+    if(heroLive||unsettled||motionPending||activeCapability)raf=requestAnimationFrame(animate);
   }
-  requestAnimationFrame(animate);
+
+  document.addEventListener("visibilitychange",()=>{
+    if(!document.hidden)ensureAnimation();
+  });
+  ensureAnimation();
 }
 
 function ring(radius,tube,color,opacity,segments){
@@ -492,13 +534,11 @@ function octagonFrame(radius,z,color,opacity){
 function createPane(width,height,color,edgeColor){
   const group=new THREE.Group();
   const geometry=new THREE.PlaneGeometry(width,height);
-  const material=new THREE.MeshPhysicalMaterial({
+  const material=new THREE.MeshBasicMaterial({
     color,
     transparent:true,
     depthWrite:false,
     opacity:.09,
-    roughness:.16,
-    metalness:.22,
     side:THREE.DoubleSide
   });
   const mesh=new THREE.Mesh(geometry,material);

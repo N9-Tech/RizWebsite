@@ -217,15 +217,14 @@ Production uses browser-native technology only:
 - semantic HTML5
 - modern CSS
 - vanilla JavaScript
-- the homepage CSS and JavaScript embedded directly in `index.html`
-- hardware-decoded H.264/MP4 video as the cinematic hero art layer
-- a poster still from the same footage for zero-flash first paint
+- homepage CSS, JavaScript and GLSL shader source embedded directly in `index.html`
+- raw WebGL for the cinematic hero
 - Sora variable typography
 - native CSS animations and transitions
-- `requestAnimationFrame` only while scroll interpolation is settling
-- `IntersectionObserver` for visibility-based media and reveal work
+- `requestAnimationFrame` only for active shader frames and scroll settling
+- `IntersectionObserver` for visibility-based rendering and reveal work
 
-Do not add npm, a package manager, a bundler, a compilation step, Three.js/WebGL, a JavaScript framework, a CSS framework, a component framework, a generated build directory, or external JavaScript dependencies for the production homepage.
+Do not add npm, a package manager, a bundler, a compilation step, Three.js, a JavaScript framework, a CSS framework, a component framework, a generated build directory, a background video, or external JavaScript dependencies for the production homepage.
 
 The repository root must remain directly deployable by an ordinary static web server.
 
@@ -246,22 +245,26 @@ Use for:
 - progressive enhancement
 - scroll progress state
 
-### Cinematic media
-Use the supplied looping video for:
+### Procedural WebGL / GLSL
+Use one full-screen triangle and one fragment shader for the hero art layer.
 
-- hero atmosphere
-- depth and motion
-- gold/blue light language
-- centre flare
-- the main visual focal point
+The shader should create:
 
-The video is presentation-only, muted, looping, `playsinline`, poster-backed, and paused when reduced motion is requested or when the hero is outside the viewport.
+- symmetrical warm gold fibre bundles from the upper corners
+- symmetrical blue fibre bundles from the lower corners
+- a bright central convergence flare
+- slow lower-half navy cloud/noise
+- sparse dust detail
+- subtle pointer parallax
+- scroll-reactive optical push-in
+
+Do not use models, textures, video, scene graphs or external rendering libraries for this hero.
 
 ### CSS
 Use for:
 
 - veil/scrim treatment
-- scroll-linked video zoom
+- scroll-linked canvas scale
 - glass controls
 - typography
 - borders and hairlines
@@ -269,18 +272,19 @@ Use for:
 - gradients and masks
 - entrance choreography
 - section transitions
+- WebGL fallback art
 
 ### Native motion controller
-Use one lightweight JavaScript controller for:
+Use lightweight JavaScript for:
 
 - smoothed hero scroll progress
 - text exit
-- video zoom variables
 - project-media parallax
 - page progress
 - reveal scheduling
+- WebGL visibility and lifecycle
 
-Do not use a permanent JavaScript animation loop when the page is idle.
+Stop WebGL rendering when the hero is outside the viewport or the document is hidden.
 
 ---
 
@@ -293,51 +297,56 @@ Target on a modern desktop:
 - LCP under 2.5 seconds on a production connection where practical
 - CLS under 0.1
 - INP under 200 ms where practical
-- stable 60 fps during normal DOM scrolling
-- no continuous renderer after the hero has left the viewport
+- stable scrolling without continuous main-thread work
+- no WebGL work once the hero leaves the viewport
 
 Mobile:
 
-- prioritize stable interaction over decorative complexity
+- prioritize stable interaction over decorative resolution
 - avoid fixed blur filters and heavy backdrop compositing
 - keep pointer-only effects disabled on coarse pointers
 - keep scroll updates passive and RAF-throttled
-- pause video when it is no longer visible
+- lower WebGL internal resolution
 
-## 6.2 Video and compositor constraints
+## 6.2 WebGL constraints
 
 The cinematic hero should:
 
-- use the authored 1920×1080 H.264 MP4 directly
-- use the matching poster frame before playback
-- use `object-fit: cover`
-- animate only compositor-friendly transform/opacity/filter values
-- keep filter effects restrained
-- avoid canvas/WebGL duplication behind the video
-- pause when the hero leaves the viewport
-- pause at the first frame for `prefers-reduced-motion: reduce`
+- use one full-screen triangle
+- keep the canvas buffer size stable during scroll
+- scale the displayed canvas with CSS rather than reallocating its render target
+- use no textures
+- use no video
+- use no model assets
+- use no post-processing chain
+- render at reduced internal resolution and let the browser upscale
+- use a lower animation rate than the display when the motion is slow
+- stop rendering when offscreen
+- render one static frame for `prefers-reduced-motion: reduce`
+- fall back to CSS gradients when WebGL is unavailable or the context is lost
 
-Large blur filters, fixed noise overlays and unnecessary backdrop filtering should not be used during scroll.
+Avoid unnecessary shader noise octaves and expensive per-pixel loops.
 
 ## 6.3 Adaptive behaviour
 
 Desktop:
-- full video motion
-- cinematic scroll zoom
+- procedural WebGL hero at restrained internal resolution
+- approximately 36 fps ambient shader motion
+- scroll zoom handled by lightweight CSS + a scroll uniform
 - full entrance sequence
-- pointer glow only on fine-pointer devices
 
 Mobile/tablet:
-- same authored video with stronger readability veil
+- lower internal canvas resolution
+- approximately 30 fps shader motion
+- stronger readability veil
 - CSS-only checkbox menu
 - 44px minimum tap targets
-- slightly shorter scroll chapter
-- no pointer glow
+- no pointer glow on coarse pointers
 
 Reduced motion:
-- video paused on its first frame
+- one static shader frame
 - entrance animations disabled
-- scroll-linked transforms disabled
+- scroll-linked motion disabled
 - content remains fully readable and usable
 
 ---

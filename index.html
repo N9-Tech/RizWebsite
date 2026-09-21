@@ -405,7 +405,7 @@ body:before{display:none}
   --ent-line:cubic-bezier(.16,1,.3,1);
   --ent-soft:cubic-bezier(.25,.8,.35,1);
   --rise:9px;
-  --hero-video-scale:calc(1.02 + var(--hero-dive)*.17);
+  --hero-art-scale:calc(1.02 + var(--hero-dive)*.17);
 }
 body{
   font-family:var(--font-sans);
@@ -519,7 +519,7 @@ body{
       calc(var(--hero-dive)*-.8vh),
       0
     )
-    scale(var(--hero-video-scale));
+    scale(var(--hero-art-scale));
   filter:
     brightness(calc(.76 + var(--hero-dive)*.13))
     saturate(calc(.88 + var(--hero-dive)*.15));
@@ -990,6 +990,50 @@ body{
   .capabilities{padding-top:calc(96px + 10svh)}
 }
 
+
+/* Procedural WebGL light-field hero — no video asset, no external renderer. */
+.hero-art-fallback{
+  position:absolute;
+  inset:0;
+  z-index:0;
+  background:
+    radial-gradient(circle at 50% 48%,rgba(255,250,226,.92) 0 1.3%,rgba(255,214,139,.23) 4%,transparent 13%),
+    radial-gradient(ellipse at 50% 58%,rgba(45,105,191,.16),transparent 28%),
+    linear-gradient(148deg,transparent 0 28%,rgba(245,180,90,.10) 42%,transparent 50%),
+    linear-gradient(32deg,transparent 0 32%,rgba(71,135,226,.10) 44%,transparent 52%),
+    radial-gradient(ellipse at 50% 78%,#0b1731 0%,#050a18 40%,#02050d 76%);
+  opacity:1;
+  transition:opacity .5s ease;
+}
+.webgl-art-ready .hero-art-fallback{opacity:0}
+.hero-webgl{
+  z-index:1;
+  display:block;
+  object-fit:unset;
+  filter:none!important;
+  background:transparent;
+}
+.hero-veil{z-index:2}
+.hero-light-grid{z-index:3}
+.hero-art-stage:after{
+  content:"";
+  position:absolute;
+  z-index:2;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 50% 49%,rgba(255,243,210,.055),transparent 16%),
+    linear-gradient(180deg,rgba(1,4,11,.04),transparent 52%,rgba(1,4,11,.17));
+}
+@media(max-width:640px){
+  .hero-webgl{
+    transform:scale(calc(1.08 + var(--hero-dive)*.10));
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .hero-webgl{transform:scale(1.03)!important;filter:none!important}
+}
+
 </style></head><body><div class="pointer-glow" aria-hidden="true"></div><div class="page-progress" aria-hidden="true"><i></i></div>
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header">
@@ -1010,7 +1054,8 @@ body{
 <main id="main">
 <section class="hero shell" id="top">
   <div class="hero-art-stage" aria-hidden="true">
-    <video class="hero-art" autoplay muted loop playsinline preload="auto" poster="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/130837c4-0244-4f37-9c61-8d801d93fd29.jpg" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260912_104303_0c6d60b2-9353-408e-9449-585108a22fb5.mp4"></video>
+    <div class="hero-art-fallback" aria-hidden="true"></div>
+    <canvas class="hero-art hero-webgl" id="hero-webgl" aria-hidden="true"></canvas>
     <div class="hero-veil"></div>
     <div class="hero-light-grid"></div>
   </div>
@@ -1032,7 +1077,7 @@ body{
   </div>
   <div class="hero-orbit-label"><span>VISUAL SYSTEM</span><b>LIVE</b></div>
   <div class="hero-scroll-hint"><span>SCROLL TO INSPECT</span><span class="scroll-line"></span></div>
-  <div class="scene-status"><span>ART / 01</span><span>STATE / DORMANT</span></div>
+  <div class="scene-status"><span>GLSL / 01</span><span>STATE / DORMANT</span></div>
 </section>
 <section class="capabilities shell section" id="capabilities"><div class="section-label"><span>01</span><span>CAPABILITY MAP</span></div><div class="cap-intro"><h2>One engineer.<br><span>Multiple layers.</span></h2><p>I work across product, backend, automation, infrastructure and AI-assisted development, so fewer ideas get lost between design and delivery.</p></div><div class="cap-list">
 <article class="cap-row" tabindex="0"><span class="cap-index">01</span><h3>Product Engineering</h3><p>Interfaces, application logic and product systems designed to survive real use.</p><span class="cap-arrow">↗</span></article>
@@ -1058,7 +1103,7 @@ integration 9 passed
 e2e         6 passed</pre></article><article class="workflow-stage"><span>06</span><h3>SHIP</h3><pre>production / healthy
 release gate / passed</pre></article></div></div></section>
 <section class="stack-section shell section"><div class="section-label"><span>04</span><span>SYSTEM LAYERS</span></div><div class="stack-grid"><div><h2>Built across<br><span>the stack.</span></h2><p>From interface logic to deployment and infrastructure.</p></div><div class="stack-planes">
-<button class="stack-plane active"><span>01</span><strong>INTERFACE</strong><em>HTML · CSS · JavaScript · Three.js</em></button><button class="stack-plane"><span>02</span><strong>APPLICATION</strong><em>Node.js · PHP · REST APIs</em></button><button class="stack-plane"><span>03</span><strong>SERVICES</strong><em>Integrations · Queues · Workers</em></button><button class="stack-plane"><span>04</span><strong>DATA</strong><em>MySQL · PostgreSQL · Redis</em></button><button class="stack-plane"><span>05</span><strong>AUTOMATION</strong><em>AI agents · Testing loops · Structured prompting</em></button><button class="stack-plane"><span>06</span><strong>INFRASTRUCTURE</strong><em>Linux · Nginx · CloudPanel · Cloudflare</em></button><button class="stack-plane"><span>07</span><strong>DELIVERY</strong><em>GitHub Pages · Nginx · Cloudflare</em></button></div></div></section>
+<button class="stack-plane active"><span>01</span><strong>INTERFACE</strong><em>HTML · CSS · JavaScript · WebGL</em></button><button class="stack-plane"><span>02</span><strong>APPLICATION</strong><em>Node.js · PHP · REST APIs</em></button><button class="stack-plane"><span>03</span><strong>SERVICES</strong><em>Integrations · Queues · Workers</em></button><button class="stack-plane"><span>04</span><strong>DATA</strong><em>MySQL · PostgreSQL · Redis</em></button><button class="stack-plane"><span>05</span><strong>AUTOMATION</strong><em>AI agents · Testing loops · Structured prompting</em></button><button class="stack-plane"><span>06</span><strong>INFRASTRUCTURE</strong><em>Linux · Nginx · CloudPanel · Cloudflare</em></button><button class="stack-plane"><span>07</span><strong>DELIVERY</strong><em>GitHub Pages · Nginx · Cloudflare</em></button></div></div></section>
 <section class="console-section shell section"><div class="section-label"><span>05</span><span>LIVE ENGINEERING CONSOLE</span></div><div class="console"><aside><div class="console-lights"><i></i><i></i><i></i></div><button class="active" data-mode="BUILD A PRODUCT">BUILD</button><button data-mode="AUTOMATE A WORKFLOW">AUTOMATE</button><button data-mode="DEPLOY A SERVICE">DEPLOY</button></aside><div class="console-main"><div class="console-top"><span>THEACE9 / BUILD</span><span>LOCAL STORY MODE</span></div><pre id="console-output"></pre><div class="console-tabs"><button class="active" data-mode="BUILD A PRODUCT">BUILD A PRODUCT</button><button data-mode="AUTOMATE A WORKFLOW">AUTOMATE A WORKFLOW</button><button data-mode="DEPLOY A SERVICE">DEPLOY A SERVICE</button></div></div></div></section>
 <section class="principles shell section"><div class="section-label"><span>06</span><span>ENGINEERING PRINCIPLES</span></div><h2>How I build.</h2><div class="principle-list"><article><span>01</span><h3>Understand the failure modes</h3><p>A feature is not finished because the happy path works.</p></article><article><span>02</span><h3>Keep systems observable</h3><p>Logs, states and failures should explain what the system is doing.</p></article><article><span>03</span><h3>Automate repetitive work</h3><p>Human attention belongs on decisions, not repeatable mechanics.</p></article><article><span>04</span><h3>Use AI for leverage, not blind trust</h3><p>Generated code still needs architecture, review and verification.</p></article></div></section>
 <section class="about shell section" id="about"><div class="section-label"><span>07</span><span>ABOUT</span></div><div class="about-grid"><h2>I like building<br><span>the whole system.</span></h2><div><p class="about-lead">I'm a UK software engineer focused on practical products, automation and technical systems.</p><p>I work comfortably from interface and application logic through deployment and infrastructure, and I use modern AI development tools to shorten the path from idea to working software.</p><p class="about-rule">The goal is not to generate more code.<br>The goal is to reach a reliable solution faster.</p><div class="about-meta"><span>LOCATION</span><strong>Manchester, UK</strong><span>FOCUS</span><strong>Build / Automate / Deploy</strong></div></div></div></section>
@@ -1294,33 +1339,255 @@ addEventListener("pointermove",(event)=>{
   }
 },{passive:true});
 
-/* Cinematic video: respect reduced motion and suspend decoding off the hero. */
+/* Procedural light-field hero: raw WebGL, one full-screen triangle. */
 (function(){
-  var q=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)");
-  var v=document.querySelector("video.hero-art");
-  var hero=document.querySelector(".hero");
-  if(!v)return;
-  var visible=true;
-  function sync(){
-    if((q&&q.matches)||!visible){
-      v.pause();
+  var canvas=document.getElementById("hero-webgl"),
+      hero=document.querySelector(".hero"),
+      root=document.documentElement,
+      reduced=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)");
+  if(!canvas||!hero)return;
+
+  var gl=canvas.getContext("webgl",{alpha:false,antialias:false,powerPreference:"high-performance",preserveDrawingBuffer:false});
+  if(!gl){root.classList.add("webgl-art-fallback");return;}
+
+  var vert=[
+    "attribute vec2 aPos;",
+    "void main(){gl_Position=vec4(aPos,0.0,1.0);}"
+  ].join("\n");
+
+  var frag=[
+    "precision highp float;",
+    "uniform vec2 uRes;",
+    "uniform vec2 uPointer;",
+    "uniform float uTime;",
+    "uniform float uScroll;",
+    "",
+    "float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453123);}",
+    "float noise(vec2 p){",
+    "  vec2 i=floor(p),f=fract(p);",
+    "  f=f*f*(3.0-2.0*f);",
+    "  return mix(mix(hash(i),hash(i+vec2(1.0,0.0)),f.x),mix(hash(i+vec2(0.0,1.0)),hash(i+vec2(1.0,1.0)),f.x),f.y);",
+    "}",
+    "float fbm(vec2 p){",
+    "  float v=0.0,a=.52;",
+    "  mat2 m=mat2(1.62,1.17,-1.17,1.62);",
+    "  for(int i=0;i<4;i++){v+=a*noise(p);p=m*p+vec2(7.3,3.1);a*=.48;}",
+    "  return v;",
+    "}",
+    "float filament(float signedD,float along,float phase,float density){",
+    "  float envelope=exp(-abs(signedD)*10.0);",
+    "  float hair=pow(max(0.0,cos(signedD*density+along*7.0+phase)),22.0);",
+    "  float core=exp(-abs(signedD)*95.0);",
+    "  return envelope*hair*.62+core*.36;",
+    "}",
+    "float bundleUp(vec2 p,float spread,float phase){",
+    "  float x=abs(p.x);",
+    "  float curve=.035+spread*pow(x,.59)+sin(x*3.7+phase)*.012*x;",
+    "  float s=p.y-curve;",
+    "  return filament(s,x,phase,390.0)+.55*filament(s+.024,x,phase+1.3,510.0)+.38*filament(s-.031,x,phase+2.1,620.0);",
+    "}",
+    "float bundleDown(vec2 p,float spread,float phase){",
+    "  float x=abs(p.x);",
+    "  float curve=.015-spread*pow(x,.67)+sin(x*4.2+phase)*.010*x;",
+    "  float s=p.y-curve;",
+    "  return filament(s,x,phase,410.0)+.5*filament(s-.022,x,phase+.8,560.0)+.34*filament(s+.030,x,phase+1.8,650.0);",
+    "}",
+    "void main(){",
+    "  vec2 uv=gl_FragCoord.xy/uRes.xy;",
+    "  vec2 p=uv*2.0-1.0;",
+    "  p.x*=uRes.x/uRes.y;",
+    "  float zoom=mix(1.02,.78,uScroll);",
+    "  p*=zoom;",
+    "  p+=vec2(uPointer.x*.035,uPointer.y*.022)*(1.0-uScroll*.45);",
+    "  float t=uTime;",
+    "",
+    "  vec3 col=vec3(.004,.008,.020);",
+    "  float radial=length(vec2(p.x*.72,p.y));",
+    "  col+=vec3(.008,.018,.042)*(1.0-smoothstep(.15,1.35,radial));",
+    "",
+    "  vec2 cq=p*vec2(.72,.90)+vec2(.0,t*.018);",
+    "  float cloudA=fbm(cq*1.55+vec2(sin(t*.026)*.16,0.0));",
+    "  float cloudB=noise(cq*2.45+vec2(4.1,-t*.012));",
+    "  float lower=1.0-smoothstep(-.72,.18,p.y);",
+    "  float cloud=smoothstep(.48,.78,cloudA*.86+cloudB*.24)*lower;",
+    "  col+=vec3(.018,.050,.125)*cloud*1.6;",
+    "  col+=vec3(.015,.030,.073)*lower*(.28+.72*noise(cq*.82+8.0));",
+    "",
+    "  float drift=sin(t*.055)*.018;",
+    "  vec2 fp=p; fp.y+=drift*(.3+abs(p.x));",
+    "  float gate=smoothstep(.02,.36,abs(fp.x));",
+    "  float gold=(bundleUp(fp,.70,.2)+.82*bundleUp(fp,.83,1.1)+.55*bundleUp(fp,.98,2.2))*gate;",
+    "  float blue=(bundleDown(fp,.64,.6)+.84*bundleDown(fp,.76,1.5)+.52*bundleDown(fp,.91,2.8))*gate;",
+    "",
+    "  float centerDist=length(vec2(fp.x,fp.y-.015));",
+    "  float flare=exp(-centerDist*12.0);",
+    "  float hot=exp(-centerDist*34.0);",
+    "  float hStreak=exp(-abs(fp.y-.012)*105.0)*exp(-abs(fp.x)*2.9);",
+    "  float vStreak=exp(-abs(fp.x)*150.0)*exp(-abs(fp.y-.01)*4.2);",
+    "  float bloom=(flare*.55+hot*2.1+hStreak*.19+vStreak*.10)*(1.0+uScroll*.52);",
+    "",
+    "  vec3 goldC=vec3(1.22,.72,.28);",
+    "  vec3 goldHot=vec3(1.28,1.03,.76);",
+    "  vec3 blueC=vec3(.14,.47,1.18);",
+    "  vec3 blueHot=vec3(.53,.79,1.34);",
+    "  col+=goldC*gold*.72+goldHot*gold*gold*.22;",
+    "  col+=blueC*blue*.72+blueHot*blue*blue*.20;",
+    "  col+=vec3(1.28,1.13,.92)*bloom;",
+    "",
+    "  float rayGold=exp(-abs(fp.y-(.03+.79*pow(abs(fp.x),.60)))*18.0)*gate;",
+    "  float rayBlue=exp(-abs(fp.y-(.01-.70*pow(abs(fp.x),.68)))*18.0)*gate;",
+    "  col+=goldC*rayGold*.045+blueC*rayBlue*.05;",
+    "",
+    "  vec2 dustGrid=uv*vec2(96.0,58.0);",
+    "  vec2 cell=floor(dustGrid);",
+    "  vec2 local=fract(dustGrid)-.5;",
+    "  float rnd=hash(cell);",
+    "  float dust=step(.986,rnd)*smoothstep(.055,.0,length(local))*(.25+.75*hash(cell+3.7));",
+    "  col+=vec3(.62,.76,1.0)*dust*.32;",
+    "",
+    "  float vign=1.0-smoothstep(.48,1.35,length(vec2(p.x*.64,p.y*.74)));",
+    "  col*=.63+.37*vign;",
+    "  col=1.0-exp(-col*1.12);",
+    "  col=pow(max(col,0.0),vec3(.90));",
+    "  gl_FragColor=vec4(col,1.0);",
+    "}"
+  ].join("\n");
+
+  function compile(type,source){
+    var shader=gl.createShader(type);
+    gl.shaderSource(shader,source); gl.compileShader(shader);
+    if(!gl.getShaderParameter(shader,gl.COMPILE_STATUS)){
+      var log=gl.getShaderInfoLog(shader)||"shader compile failed";
+      gl.deleteShader(shader); throw new Error(log);
+    }
+    return shader;
+  }
+
+  var program;
+  try{
+    var vs=compile(gl.VERTEX_SHADER,vert),fs=compile(gl.FRAGMENT_SHADER,frag);
+    program=gl.createProgram();
+    gl.attachShader(program,vs);gl.attachShader(program,fs);gl.linkProgram(program);
+    if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(program)||"program link failed");
+    gl.deleteShader(vs);gl.deleteShader(fs);
+  }catch(err){
+    console.warn("Procedural hero unavailable; using CSS fallback.",err);
+    root.classList.add("webgl-art-fallback");
+    return;
+  }
+
+  gl.useProgram(program);
+  var buffer=gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER,buffer);
+  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+  var pos=gl.getAttribLocation(program,"aPos");
+  gl.enableVertexAttribArray(pos);
+  gl.vertexAttribPointer(pos,2,gl.FLOAT,false,0,0);
+
+  var uRes=gl.getUniformLocation(program,"uRes"),
+      uPointer=gl.getUniformLocation(program,"uPointer"),
+      uTime=gl.getUniformLocation(program,"uTime"),
+      uScroll=gl.getUniformLocation(program,"uScroll");
+
+  var compact=matchMedia("(max-width:700px)").matches,
+      saveData=!!(navigator.connection&&navigator.connection.saveData),
+      lowPower=saveData||(navigator.hardwareConcurrency||8)<=4||(navigator.deviceMemory||8)<=4,
+      renderScale=compact?.68:(lowPower?.68:.78),
+      fps=compact?30:(lowPower?30:36),
+      interval=1000/fps,
+      visible=true,
+      running=false,
+      raf=0,
+      last=0,
+      start=performance.now(),
+      pointerX=0,
+      pointerY=0,
+      dirty=true;
+
+  function resize(){
+    var stage=canvas.parentElement,
+        cssW=stage&&stage.clientWidth?stage.clientWidth:innerWidth,
+        cssH=stage&&stage.clientHeight?stage.clientHeight:innerHeight,
+        w=Math.max(1,Math.round(cssW*renderScale)),
+        h=Math.max(1,Math.round(cssH*renderScale)),
+        maxPixels=compact?560000:900000,
+        pixels=w*h;
+    if(pixels>maxPixels){
+      var k=Math.sqrt(maxPixels/pixels);w=Math.max(1,Math.round(w*k));h=Math.max(1,Math.round(h*k));
+    }
+    if(canvas.width!==w||canvas.height!==h){
+      canvas.width=w;canvas.height=h;gl.viewport(0,0,w,h);dirty=true;
+    }
+  }
+
+  function draw(now){
+    raf=0;
+    if(!visible||document.hidden)return;
+    if(last&&now-last<interval*.92){raf=requestAnimationFrame(draw);return;}
+    last=now;
+    resize();
+    var progress=window.__rizMotion?window.__rizMotion.heroProgress:0;
+    gl.uniform2f(uRes,canvas.width,canvas.height);
+    gl.uniform2f(uPointer,pointerX,pointerY);
+    gl.uniform1f(uTime,(now-start)/1000);
+    gl.uniform1f(uScroll,progress);
+    gl.drawArrays(gl.TRIANGLES,0,3);
+    dirty=false;
+    root.classList.add("webgl-art-ready");
+    if(!(reduced&&reduced.matches))raf=requestAnimationFrame(draw);
+  }
+
+  function startLoop(){
+    if(document.hidden||!visible)return;
+    if(reduced&&reduced.matches){
+      if(!raf)raf=requestAnimationFrame(draw);
       return;
     }
-    var p=v.play();
-    if(p&&p.catch)p.catch(function(){});
+    if(!raf)raf=requestAnimationFrame(draw);
   }
-  sync();
-  if(q){
-    if(q.addEventListener)q.addEventListener("change",sync);
-    else if(q.addListener)q.addListener(sync);
+
+  addEventListener("pointermove",function(e){
+    if(e.pointerType==="touch")return;
+    pointerX=(e.clientX/innerWidth-.5)*2.0;
+    pointerY=(e.clientY/innerHeight-.5)*-2.0;
+    dirty=true;startLoop();
+  },{passive:true});
+
+  addEventListener("resize",function(){dirty=true;resize();startLoop();},{passive:true});
+  addEventListener("scroll",function(){dirty=true;startLoop();},{passive:true});
+
+  if("IntersectionObserver" in window){
+    new IntersectionObserver(function(entries){
+      visible=!!(entries[0]&&entries[0].isIntersecting);
+      if(visible)startLoop();
+      else if(raf){cancelAnimationFrame(raf);raf=0;}
+    },{rootMargin:"120px 0px",threshold:0}).observe(hero);
   }
-  if(hero&&"IntersectionObserver" in window){
-    var observer=new IntersectionObserver(function(entries){
-      visible=entries[0]&&entries[0].isIntersecting;
-      sync();
-    },{rootMargin:"120px 0px 120px 0px",threshold:0});
-    observer.observe(hero);
+
+  if(reduced){
+    var syncMotion=function(){
+      if(reduced.matches){
+        if(raf){cancelAnimationFrame(raf);raf=0;}
+        draw(performance.now());
+      }else startLoop();
+    };
+    reduced.addEventListener?reduced.addEventListener("change",syncMotion):reduced.addListener(syncMotion);
   }
+
+  document.addEventListener("visibilitychange",function(){
+    if(!document.hidden)startLoop();
+    else if(raf){cancelAnimationFrame(raf);raf=0;}
+  });
+
+  canvas.addEventListener("webglcontextlost",function(e){
+    e.preventDefault();
+    if(raf){cancelAnimationFrame(raf);raf=0;}
+    root.classList.remove("webgl-art-ready");
+    root.classList.add("webgl-art-fallback");
+  });
+
+  resize();
+  startLoop();
 })();
 
 /* Entrance CSS runs once. Retire it so responsive changes cannot replay it. */

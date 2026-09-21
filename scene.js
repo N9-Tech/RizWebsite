@@ -367,7 +367,7 @@ function startScene(canvas){
     const desktopOffset=innerWidth>1100?2.02:innerWidth>760?1.02:.24;
 
     const zoomZ=lerp(6.35,2.45,dive);
-    const cameraZ=lerp(zoomZ,6.28,resolve);
+    const cameraZ=lerp(zoomZ,6.4,resolve);
     const cameraX=.03+dive*.34-resolve*.18+pointerX*.055;
     const cameraY=.04+inspect*.16+dive*.18-resolve*.08+pointerY*.045;
     target.set(cameraX,cameraY,cameraZ);
@@ -379,14 +379,14 @@ function startScene(canvas){
       camera.updateProjectionMatrix();
     }
 
-    const resolvedX=desktopOffset*1.28;
+    const resolvedX=desktopOffset*1.52;
     const rootX=lerp(desktopOffset,.58,dive);
     root.position.x=lerp(root.position.x,lerp(rootX,resolvedX,resolve)+pointerX*.08,Math.min(1,delta*4));
     root.position.y=lerp(root.position.y,pointerY*.055+dive*.12-resolve*.2,Math.min(1,delta*4));
     root.rotation.y=lerp(root.rotation.y,progress*1.28+pointerX*.07+Math.sin(t*.14)*.026,Math.min(1,delta*3.8));
     root.rotation.x=lerp(root.rotation.x,-.08+progress*.34-pointerY*.035,Math.min(1,delta*3.8));
     root.rotation.z=lerp(root.rotation.z,Math.sin(t*.11)*.014+burst*.08,Math.min(1,delta*3.8));
-    root.scale.setScalar(.92+dive*.25-resolve*.54);
+    root.scale.setScalar(.92+dive*.25-resolve*.78);
 
     const pulse=1+Math.sin(t*1.45)*.026+(activeCapability?.05:0)+inspect*.035+burst*.09;
     inner.scale.setScalar(pulse);

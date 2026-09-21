@@ -1,3 +1,0 @@
-import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
-export default function ContactCTA(){return <section className="contact-cta shell section"><div className="contact-core" aria-hidden="true"><i/></div><p className="eyebrow"><i/> READY FOR INPUT</p><h2>Have something<br/><span>worth building?</span></h2><p>Tell me what you&apos;re trying to make, automate or improve.</p><Link className="button button-primary contact-button" href="/contact">Start a conversation <ArrowUpRight size={17}/></Link></section>}

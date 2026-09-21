@@ -1407,11 +1407,11 @@ addEventListener("pointermove",(event)=>{
     "",
     "  vec2 cq=p*vec2(.72,.90)+vec2(.0,t*.018);",
     "  float cloudA=fbm(cq*1.55+vec2(sin(t*.026)*.16,0.0));",
-    "  float cloudB=fbm(cq*2.45+vec2(4.1,-t*.012));",
+    "  float cloudB=noise(cq*2.45+vec2(4.1,-t*.012));",
     "  float lower=1.0-smoothstep(-.72,.18,p.y);",
-    "  float cloud=smoothstep(.48,.79,cloudA*.74+cloudB*.38)*lower;",
+    "  float cloud=smoothstep(.48,.78,cloudA*.86+cloudB*.24)*lower;",
     "  col+=vec3(.018,.050,.125)*cloud*1.6;",
-    "  col+=vec3(.015,.030,.073)*lower*(.25+.75*fbm(cq*.8+8.0));",
+    "  col+=vec3(.015,.030,.073)*lower*(.28+.72*noise(cq*.82+8.0));",
     "",
     "  float drift=sin(t*.055)*.018;",
     "  vec2 fp=p; fp.y+=drift*(.3+abs(p.x));",
@@ -1492,7 +1492,7 @@ addEventListener("pointermove",(event)=>{
   var compact=matchMedia("(max-width:700px)").matches,
       saveData=!!(navigator.connection&&navigator.connection.saveData),
       lowPower=saveData||(navigator.hardwareConcurrency||8)<=4||(navigator.deviceMemory||8)<=4,
-      renderScale=compact?.68:(lowPower?.72:.82),
+      renderScale=compact?.68:(lowPower?.68:.78),
       fps=compact?30:(lowPower?30:36),
       interval=1000/fps,
       visible=true,
@@ -1510,7 +1510,7 @@ addEventListener("pointermove",(event)=>{
         cssH=stage&&stage.clientHeight?stage.clientHeight:innerHeight,
         w=Math.max(1,Math.round(cssW*renderScale)),
         h=Math.max(1,Math.round(cssH*renderScale)),
-        maxPixels=compact?560000:1050000,
+        maxPixels=compact?560000:900000,
         pixels=w*h;
     if(pixels>maxPixels){
       var k=Math.sqrt(maxPixels/pixels);w=Math.max(1,Math.round(w*k));h=Math.max(1,Math.round(h*k));

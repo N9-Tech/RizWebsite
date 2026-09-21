@@ -303,3 +303,21 @@ body:before{
 @media(max-width:767px){
   .work-section{padding-top:86px}
 }
+
+/* Final compositor cleanup */
+body:before{display:none}
+.site-header.is-scrolled{
+  background:rgba(5,6,7,.94);
+  backdrop-filter:none;
+}
+.pointer-glow{
+  width:300px;
+  height:300px;
+  filter:none;
+  mix-blend-mode:normal;
+  opacity:.1;
+  background:radial-gradient(circle,rgba(157,245,207,.12),rgba(157,245,207,.025) 34%,transparent 70%);
+}
+@media(pointer:coarse){
+  .pointer-glow{display:none}
+}

@@ -8,3 +8,7 @@
   .scene-canvas{display:none}
   .preview-engine{animation:none}
 }
+
+.case-cover img{width:100%;height:100%;display:block;object-fit:cover}
+.next-project b{font-size:1.5rem;font-weight:400;color:#68726e;transition:.2s}
+.next-project:hover b{color:var(--accent);transform:translate(4px,-4px)}

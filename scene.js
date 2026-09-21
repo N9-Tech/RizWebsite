@@ -1,5 +1,7 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.186.0/build/three.module.js";
 
+const ACCENT = new THREE.Color("#9df5cf");
+const HOT = new THREE.Color("#d9ff5f");
 const canvas = document.querySelector("#scene-canvas");
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -89,7 +91,7 @@ function startScene(canvas) {
     uniforms: {
       uTime: { value: 0 },
       uIntensity: { value: 0 },
-      uColor: { value: new THREE.Color("#9df5cf") }
+      uColor: { value: ACCENT.clone() }
     },
     vertexShader: [
       "varying vec3 vNormalW;",
@@ -330,7 +332,7 @@ function startScene(canvas) {
 
     auraMaterial.uniforms.uTime.value=t;
     auraMaterial.uniforms.uIntensity.value=opening+(activeCapability?.35:0);
-    auraMaterial.uniforms.uColor.value.lerp(new THREE.Color(activeCapability?"#d9ff5f":"#9df5cf"),.06);
+    auraMaterial.uniforms.uColor.value.lerp(activeCapability?HOT:ACCENT,.06);
 
     struts.forEach((group)=>{
       const base=group.userData.base,expand=group.userData.expand;

@@ -5,181 +5,208 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Rizwan | Full-stack engineer for Android, iOS, web, games and AI agents</title>
 <meta name="description" content="Rizwan is a full-stack software engineer with 14+ years of experience building Android apps, iOS apps, websites, games and AI agent systems.">
-<meta name="theme-color" content="#08090c">
+<meta name="theme-color" content="#07080b">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+<script>document.documentElement.className='js'</script>
 <style>
-:root{--bg:#08090c;--ink:#f1efe9;--dim:#8b8d96;--line:#202229;--ice:#9bf0ff;--amber:#ffb26b;--ease:cubic-bezier(.22,1,.36,1);--serif:"Instrument Serif","Times New Roman",serif;--sans:"Geist","Helvetica Neue",Arial,sans-serif;--mono:"Geist Mono",ui-monospace,Menlo,monospace}
+:root{--bg:#07080b;--ink:#f2f0ea;--dim:#80838d;--line:#1d1f26;--ice:#9bf0ff;--amber:#ffb26b;--ease:cubic-bezier(.22,1,.36,1);--serif:"Instrument Serif","Times New Roman",serif;--sans:"Geist","Helvetica Neue",Arial,sans-serif;--mono:"Geist Mono",ui-monospace,Menlo,monospace}
 *{box-sizing:border-box;margin:0;padding:0}
-html{background:var(--bg);overflow-x:clip;scroll-behavior:smooth}
+html{background:var(--bg);overflow-x:clip}
 body{background:var(--bg);color:var(--ink);font:300 1.0625rem/1.7 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:clip}
 a{color:inherit;text-decoration:none}
 :focus-visible{outline:2px solid var(--ice);outline-offset:4px;border-radius:4px}
-.wrap{width:min(1240px,100% - 3rem);margin-inline:auto}
-#bar{position:fixed;top:0;left:0;height:2px;width:100%;background:var(--ice);transform:scaleX(0);transform-origin:0 50%;z-index:60}
-header{position:fixed;inset:0 0 auto;z-index:50;padding-top:env(safe-area-inset-top,0)}
-header .wrap{display:flex;align-items:center;justify-content:space-between;height:80px}
-.brand{display:flex;align-items:center;gap:.8rem;font:500 1.05rem var(--sans);letter-spacing:.01em}
-.brand svg{width:36px;height:36px}
-.logo path{stroke-dasharray:140;stroke-dashoffset:140;animation:draw 1.8s var(--ease) .2s forwards}
-.logo circle{transform-box:fill-box;transform-origin:center;opacity:0;animation:pop .7s var(--ease) forwards}
-.logo circle:nth-of-type(1){animation-delay:1.2s}.logo circle:nth-of-type(2){animation-delay:1.5s}
+.wrap{width:min(1320px,100% - 3.2rem);margin-inline:auto}
+.js body:not(.go){overflow:hidden}
+#ld{position:fixed;inset:0;z-index:200;background:var(--bg);display:none;align-items:flex-end;justify-content:space-between;padding:0 clamp(1.6rem,4vw,3.4rem) 3rem;transition:transform 1.2s var(--ease) .15s}
+.js #ld{display:flex}
+.go #ld{transform:translateY(-101%)}
+#ld svg{width:64px;height:64px}
+#ld svg path{stroke-dasharray:140;stroke-dashoffset:140;animation:draw 1.6s var(--ease) .1s forwards}
+#ld svg circle{transform-box:fill-box;transform-origin:center;opacity:0;animation:pop .6s var(--ease) 1.1s forwards}
 @keyframes draw{to{stroke-dashoffset:0}}@keyframes pop{from{opacity:0;transform:scale(0)}to{opacity:1;transform:scale(1)}}
-nav{display:flex;gap:2.2rem;align-items:center;font-size:.95rem}
-nav a:not(.pill){color:var(--dim);transition:color .3s}
+#cnt{font:400 clamp(5rem,16vw,15rem)/.8 var(--serif);letter-spacing:-.04em}
+#grain{position:fixed;inset:-50%;z-index:90;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");animation:gr .9s steps(6) infinite}
+@keyframes gr{0%{transform:translate(0,0)}20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-3%)}60%{transform:translate(-2%,-1%)}80%{transform:translate(3%,3%)}100%{transform:translate(0,0)}}
+#c{position:fixed;left:0;top:0;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:#fff;mix-blend-mode:difference;pointer-events:none;z-index:150;opacity:0;transition:width .5s var(--ease),height .5s var(--ease),margin .5s var(--ease)}
+#c.big{width:76px;height:76px;margin:-38px 0 0 -38px}
+@media (hover:none){#c{display:none}}
+#bar{position:fixed;top:0;right:0;width:2px;height:100%;background:var(--ice);transform:scaleY(0);transform-origin:50% 0;z-index:60}
+header{position:fixed;inset:0 0 auto;z-index:70;padding-top:env(safe-area-inset-top,0)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:88px}
+.brand{display:flex;align-items:center;gap:.8rem;font:500 1.02rem var(--sans)}
+.brand svg{width:36px;height:36px}
+nav{display:flex;gap:2.4rem;align-items:center;font-size:.95rem}
+nav a:not(.pill){color:#b2b5bf;transition:color .3s}
 nav a:not(.pill):hover{color:var(--ink)}
-.pill{padding:.6rem 1.2rem;border-radius:99px;border:1px solid #2c2f38;background:rgba(8,9,12,.55);backdrop-filter:blur(12px);transition:border-color .3s,color .3s}
+.pill{padding:.62rem 1.25rem;border-radius:99px;border:1px solid #30333c;background:rgba(7,8,11,.5);backdrop-filter:blur(14px);transition:border-color .3s,color .3s}
 .pill:hover{border-color:var(--ice);color:var(--ice)}
-#hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;padding:130px 0 6vh;overflow:hidden}
-#field{position:absolute;inset:0;width:100%;height:100%}
-#hero:after{content:"";position:absolute;inset:0;background:radial-gradient(120% 80% at 20% 100%,rgba(8,9,12,.85),transparent 60%);pointer-events:none}
+#hero{position:relative;height:100svh;min-height:640px;display:flex;flex-direction:column;justify-content:flex-end;padding:0 0 4.5vh;overflow:hidden;background:radial-gradient(90% 70% at 70% 30%,#14202a,var(--bg))}
+#gl{position:absolute;inset:0;width:100%;height:100%}
+#hero:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(7,8,11,.78),rgba(7,8,11,0) 62%),linear-gradient(0deg,rgba(7,8,11,.7),transparent 40%);pointer-events:none}
 #hero .wrap{position:relative;z-index:2}
-h1{font:400 clamp(3.4rem,11.5vw,10.5rem)/.9 var(--serif);letter-spacing:-.025em}
-h1 .ln{display:block;overflow:hidden;padding:.04em 0 .1em}
-h1 .ln span{display:inline-block;transform:translateY(112%);animation:rise 1.5s var(--ease) forwards}
-h1 .ln:nth-child(2) span{animation-delay:.14s;font-style:italic;color:var(--ice)}
-@keyframes rise{to{transform:none}}
-.hero-foot{display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;flex-wrap:wrap;margin-top:2.4rem;opacity:0;animation:fade 1.4s ease 1s forwards}
-@keyframes fade{to{opacity:1}}
-.lede{max-width:31rem;color:#b4b6bd;font-size:1.15rem}
-.cta{display:flex;gap:.9rem;flex-wrap:wrap}
-.btn{display:inline-block;padding:1rem 1.7rem;border-radius:99px;font-weight:500;border:1px solid #2c2f38;transition:transform .4s var(--ease),background .3s,color .3s,border-color .3s}
+h1{font:400 clamp(3.6rem,12.6vw,12.6rem)/.86 var(--serif);letter-spacing:-.035em}
+h1 .ln{display:block;overflow:hidden;padding:.05em 0 .12em}
+h1 .ln:nth-child(2){font-style:italic;padding-left:.9em}
+.ch{display:inline-block;transform:translateY(115%) rotate(4deg);transition:transform 1.4s var(--ease)}
+.go .ch{transform:none;transition-delay:calc(.55s + var(--i)*28ms)}
+.hf{display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;flex-wrap:wrap;margin-top:2.4rem;padding-top:1.6rem;border-top:1px solid rgba(255,255,255,.1);opacity:0;transition:opacity 1.6s ease 1.5s}
+.go .hf{opacity:1}
+.lede{max-width:30rem;color:#c0c2ca;font-size:1.12rem}
+.cta{display:flex;gap:.9rem}
+.btn{display:inline-block;padding:1.05rem 1.8rem;border-radius:99px;font-weight:400;border:1px solid #30333c;transition:transform .5s var(--ease),background .3s,color .3s,border-color .3s}
 .btn.main{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .btn.main:hover{background:var(--ice);border-color:var(--ice)}
-.btn.ghost:hover{border-color:var(--ice);color:var(--ice)}
-.strip{border-block:1px solid var(--line);padding:1.1rem 0;overflow:hidden;white-space:nowrap}
-.strip div{display:inline-flex;gap:3rem;animation:slide 40s linear infinite;font:400 1.6rem var(--serif);color:var(--dim)}
-.strip span:nth-child(even){color:var(--ice)}
-@keyframes slide{to{transform:translateX(-50%)}}
-section{padding:clamp(5rem,11vw,9rem) 0}
-h2{font:400 clamp(2.4rem,6vw,5rem)/1 var(--serif);letter-spacing:-.02em;max-width:15ch}
-.rv{opacity:0;transform:translateY(22px);transition:opacity 1.2s var(--ease),transform 1.2s var(--ease)}
+.btn.ghost{background:rgba(7,8,11,.4);backdrop-filter:blur(10px)}.btn.ghost:hover{border-color:var(--ice);color:var(--ice)}
+section{padding:clamp(6rem,13vw,12rem) 0}
+h2{font:400 clamp(2.6rem,6.6vw,6rem)/.98 var(--serif);letter-spacing:-.028em;max-width:14ch}
+.rv{opacity:0;transform:translateY(26px);transition:opacity 1.3s var(--ease),transform 1.3s var(--ease)}
 .rv.in{opacity:1;transform:none}
-#pin{height:560vh;padding:0;position:relative}
-.stage{position:sticky;top:0;height:100svh;display:flex;align-items:center;overflow:hidden}
-.stage .wrap{display:grid;grid-template-columns:200px 1fr;gap:3rem;align-items:center}
-.rail{list-style:none;display:flex;flex-direction:column;gap:1.1rem;font:400 .85rem var(--mono);color:#555862}
-.rail li{display:flex;align-items:center;gap:.8rem;transition:color .4s}
-.rail li:before{content:"";width:18px;height:1px;background:currentColor;transition:width .5s var(--ease)}
-.rail li.on{color:var(--ice)}.rail li.on:before{width:46px}
-#word{font:400 clamp(4.2rem,15vw,14rem)/.95 var(--serif);letter-spacing:-.03em;min-height:1em;white-space:nowrap}
-#desc{max-width:30rem;margin-top:1.6rem;color:#b4b6bd;font-size:1.2rem;min-height:5.2rem;transition:opacity .4s}
-.pr{display:grid;grid-template-columns:repeat(3,1fr);gap:3.5rem;margin-top:4rem;border-top:1px solid var(--line);padding-top:2.4rem}
-.pr h3{font:400 1.9rem/1.1 var(--serif);margin-bottom:.8rem}
-.pr p{color:var(--dim);font-size:1rem}
-.ag{display:grid;grid-template-columns:1fr 1.1fr;gap:5rem;align-items:center}
-.sub{color:#b4b6bd;margin-top:1.4rem;max-width:30rem}
-#term{border:1px solid var(--line);border-radius:12px;background:#0c0d12;padding:1.4rem 1.5rem;font:400 .9rem/1.9 var(--mono);color:#aeb3c4;min-height:16rem}
+#st p{font:400 clamp(2rem,5vw,4.6rem)/1.12 var(--serif);letter-spacing:-.02em;max-width:22ch}
+#st .w{opacity:.16;transition:opacity .5s ease}
+#st .w.on{opacity:1}
+.rows{margin-top:5rem;border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:5rem 1fr 1fr;gap:2rem;align-items:baseline;padding:2.2rem 0;border-bottom:1px solid var(--line);transition:padding .7s var(--ease),border-color .4s}
+.row small{font:400 .82rem var(--mono);color:var(--dim)}
+.row h3{font:400 clamp(2.4rem,6vw,5.4rem)/1 var(--serif);letter-spacing:-.025em;transition:transform .7s var(--ease),color .4s}
+.row p{color:var(--dim);transition:color .4s}
+.row:hover{padding-left:1.2rem;border-color:#3a3e49}.row:hover h3{color:var(--ice)}.row:hover p{color:#c0c2ca}
+#pv{position:fixed;left:0;top:0;width:280px;height:340px;z-index:80;pointer-events:none;border-radius:6px;opacity:0;transform:translate(-999px,-999px) scale(.85);transition:opacity .4s ease;overflow:hidden;border:1px solid rgba(255,255,255,.12)}
+#pv.on{opacity:1}
+#pv i{position:absolute;inset:0;opacity:0;transition:opacity .5s ease}#pv i.on{opacity:1}
+@media (hover:none){#pv{display:none}}
+.pr{display:grid;grid-template-columns:repeat(3,1fr);gap:3.5rem;margin-top:5rem}
+.pr div{position:relative;padding-top:2rem}
+.pr div:before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:var(--ice);transform:scaleX(0);transform-origin:0 50%;transition:transform 1.8s var(--ease) .3s}
+.pr.in div:before{transform:scaleX(1)}
+.pr h3{font:400 2rem/1.1 var(--serif);margin-bottom:.8rem}.pr p{color:var(--dim);font-size:1rem}
+.ag{display:grid;grid-template-columns:1fr 1.1fr;gap:6rem;align-items:center}
+.sub{color:#b4b6bf;margin-top:1.6rem;max-width:29rem}
+#term{border:1px solid var(--line);border-radius:10px;background:#0b0c11;padding:1.5rem;font:400 .9rem/1.9 var(--mono);color:#aeb3c4;min-height:16rem}
 #term .h{color:var(--dim)}#term .ok{color:#8fe3b0}#term .you{color:var(--ink)}
 .cur{display:inline-block;width:.55em;height:1.1em;background:var(--ice);vertical-align:-.2em;animation:blink 1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
-.mail{display:inline-block;margin-top:2.2rem;font:400 clamp(2.4rem,9vw,8.4rem)/1 var(--serif);letter-spacing:-.025em;background:linear-gradient(var(--ice),var(--ice)) 0 100%/0 2px no-repeat;transition:background-size .9s var(--ease),color .3s;word-break:break-word}
+.mail{display:inline-block;margin-top:2.4rem;font:400 clamp(2.6rem,9.4vw,9rem)/1 var(--serif);letter-spacing:-.03em;background:linear-gradient(var(--ice),var(--ice)) 0 100%/0 2px no-repeat;transition:background-size 1s var(--ease),color .3s;word-break:break-word}
 .mail:hover{background-size:100% 2px;color:var(--ice)}
-.copy{display:block;margin-top:1.8rem;background:none;border:1px solid #2c2f38;color:var(--ink);padding:.7rem 1.3rem;border-radius:99px;font:400 .95rem var(--sans);cursor:pointer;transition:border-color .3s}
+.copy{display:block;margin-top:2rem;background:none;border:1px solid #30333c;color:var(--ink);padding:.72rem 1.4rem;border-radius:99px;font:400 .95rem var(--sans);cursor:pointer;transition:border-color .3s}
 .copy:hover{border-color:var(--ice)}
-footer{border-top:1px solid var(--line);padding:2rem 0;color:var(--dim);font-size:.9rem}
+footer{border-top:1px solid var(--line);padding-top:2rem;overflow:hidden;color:var(--dim);font-size:.9rem}
 footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-@media (max-width:860px){nav a:not(.pill){display:none}.stage .wrap{grid-template-columns:1fr;gap:1.6rem}.rail{flex-direction:row;flex-wrap:wrap;gap:.8rem 1.2rem}.rail li:before{display:none}.pr,.ag{grid-template-columns:1fr;gap:2.2rem}#word{white-space:normal}}
-@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.01ms!important}.rv{opacity:1;transform:none}html{scroll-behavior:auto}h1 .ln span{transform:none}}
+.big{display:block}
+footer b{display:block;font:400 clamp(8rem,34vw,34rem)/.74 var(--serif);letter-spacing:-.05em;color:#14161c;margin:2rem 0 0 -.03em;white-space:nowrap;user-select:none;transform:translateY(8%)}
+@media (max-width:860px){nav a:not(.pill){display:none}.row{grid-template-columns:1fr;gap:.7rem}.row small{display:none}.pr,.ag{grid-template-columns:1fr;gap:2.4rem}h1 .ln:nth-child(2){padding-left:0}.cta{flex-wrap:wrap}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important;transition-delay:0s!important}.rv{opacity:1;transform:none}#st .w{opacity:1}#grain{display:none}}
 </style>
 </head>
 <body>
-<div id="bar"></div>
+<div id="ld" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M14 38V10h12a8 8 0 0 1 0 16H14m12 0 9 12" fill="none" stroke="#f2f0ea" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="14" cy="10" r="3.2" fill="#9bf0ff"/><circle cx="35" cy="38" r="3.2" fill="#ffb26b"/></svg><div id="cnt">0</div></div>
+<div id="grain"></div><div id="c"></div><div id="bar"></div>
+<div id="pv" aria-hidden="true"><i style="background:radial-gradient(120% 90% at 20% 10%,#9bf0ff,transparent 55%),radial-gradient(90% 80% at 90% 100%,#2b6a4f,transparent 60%),#0a1218"></i><i style="background:radial-gradient(110% 90% at 80% 10%,#ffb26b,transparent 55%),radial-gradient(90% 80% at 10% 100%,#7a3b6e,transparent 60%),#140c12"></i><i style="background:conic-gradient(from 210deg at 50% 60%,#0a1218,#9bf0ff,#0a1218 45%,#6c7bff,#0a1218)"></i><i style="background:radial-gradient(100% 90% at 50% 0%,#ff6b8a,transparent 55%),radial-gradient(90% 70% at 50% 100%,#ffb26b,transparent 60%),#120a10"></i><i style="background:repeating-linear-gradient(115deg,#0a1218 0 14px,#16303a 14px 15px),radial-gradient(100% 80% at 70% 30%,rgba(155,240,255,.7),transparent 60%)"></i></div>
 <header><div class="wrap">
-<a class="brand" href="#top" aria-label="Rizwan, home"><svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><path d="M14 38V10h12a8 8 0 0 1 0 16H14m12 0 9 12" fill="none" stroke="#f1efe9" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="14" cy="10" r="3.2" fill="#9bf0ff"/><circle cx="35" cy="38" r="3.2" fill="#ffb26b"/></svg>Rizwan</a>
-<nav><a href="#platforms">Platforms</a><a href="#principles">Approach</a><a href="#agents">AI agents</a><a class="pill" href="mailto:r@rizzy.pro">r@rizzy.pro</a></nav>
+<a class="brand" href="#top" aria-label="Rizwan, home"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 38V10h12a8 8 0 0 1 0 16H14m12 0 9 12" fill="none" stroke="#f2f0ea" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="14" cy="10" r="3.2" fill="#9bf0ff"/><circle cx="35" cy="38" r="3.2" fill="#ffb26b"/></svg>Rizwan</a>
+<nav><a href="#platforms">Platforms</a><a href="#approach">Approach</a><a href="#agents">AI agents</a><a class="pill" href="mailto:r@rizzy.pro">r@rizzy.pro</a></nav>
 </div></header>
 <main id="top">
-<section id="hero">
-<canvas id="field" aria-hidden="true"></canvas>
+<section id="hero" style="padding-top:0">
+<canvas id="gl" aria-hidden="true"></canvas>
 <div class="wrap">
-<h1 aria-label="Software for every screen."><span class="ln"><span>Software for</span></span><span class="ln"><span>every screen.</span></span></h1>
-<div class="hero-foot">
-<p class="lede">I'm Rizwan, a full-stack engineer with over 14 years of experience. I design and ship Android apps, iOS apps, websites and games, and I build with AI agents.</p>
-<div class="cta"><a class="btn main" href="mailto:r@rizzy.pro">Email me</a><a class="btn ghost" href="#platforms">See the platforms</a></div>
-</div>
+<h1 aria-label="Software for every screen."><span class="ln" data-split>Software for</span><span class="ln" data-split>every screen.</span></h1>
+<div class="hf"><p class="lede">I'm Rizwan, a full-stack engineer with over 14 years of experience. I design and ship Android apps, iOS apps, websites and games, and I build with AI agents.</p>
+<div class="cta"><a class="btn main" href="mailto:r@rizzy.pro">Email me</a><a class="btn ghost" href="#platforms">See the platforms</a></div></div>
 </div>
 </section>
-<div class="strip" aria-hidden="true"><div><span>Android</span><span>iOS</span><span>Web</span><span>Games</span><span>AI agents</span><span>Backend</span><span>Android</span><span>iOS</span><span>Web</span><span>Games</span><span>AI agents</span><span>Backend</span><span>Android</span><span>iOS</span><span>Web</span><span>Games</span><span>AI agents</span><span>Backend</span></div></div>
 
-<section id="pin"><div class="stage" id="platforms"><div class="wrap">
-<ul class="rail" id="rail"><li>Android</li><li>iOS</li><li>Web</li><li>Games</li><li>AI agents</li></ul>
-<div><div id="word" aria-live="polite">Android</div><p id="desc"></p></div>
+<section id="st"><div class="wrap"><p id="stp">For over fourteen years I've built software that people use on their phones, in their browsers and in their games, from the first sketch to the store release.</p></div></section>
+
+<section id="platforms" style="padding-top:0"><div class="wrap">
+<h2 class="rv">What I build.</h2>
+<div class="rows rv" id="rows">
+<div class="row" tabindex="0"><small>Mobile</small><h3>Android</h3><p>Native-feeling apps with smooth motion, offline support and a clean architecture, ready for Google Play.</p></div>
+<div class="row" tabindex="0"><small>Mobile</small><h3>iOS</h3><p>Polished iPhone and iPad apps that follow platform conventions and feel right from the first tap.</p></div>
+<div class="row" tabindex="0"><small>Browser</small><h3>Web</h3><p>Responsive sites and full products, from motion-rich front ends to the APIs and databases behind them.</p></div>
+<div class="row" tabindex="0"><small>Real-time</small><h3>Games</h3><p>Real-time games where frame rate, controls and feedback decide whether people keep playing.</p></div>
+<div class="row" tabindex="0"><small>Automation</small><h3>AI agents</h3><p>Agents connected to real tools, bound by clear rules, and tested like any other software.</p></div>
 </div></div></section>
 
-<section id="principles"><div class="wrap">
+<section id="approach" style="padding-top:0"><div class="wrap">
 <h2 class="rv">One engineer, every layer.</h2>
-<div class="pr rv">
+<div class="pr rv" id="pr">
 <div><h3>One owner</h3><p>Most products need several specialists to cover every device. I cover them all, so decisions stay consistent from the database to the screen.</p></div>
-<div><h3>Motion with a purpose</h3><p>Animation should explain what changed and make the product feel alive. I tune it until it's smooth, and I turn it off for people who ask for less.</p></div>
+<div><h3>Motion with a purpose</h3><p>Animation should explain what changed and make a product feel alive. I tune it until it's smooth, and I turn it down for people who ask for less.</p></div>
 <div><h3>Shipped, not demoed</h3><p>I handle store releases, hosting and monitoring, then keep improving what's live. A product only counts once people can use it.</p></div>
-</div>
-</div></section>
+</div></div></section>
 
-<section id="agents"><div class="wrap ag">
+<section id="agents" style="padding-top:0"><div class="wrap ag">
 <div><h2 class="rv">Engineering with AI agents.</h2><p class="sub rv">I use agents to move faster on research, code and testing, and I build agent-powered features into products. Every decision, review and release still has an engineer accountable for it.</p></div>
 <div id="term" class="rv" role="img" aria-label="Animated example of an engineer directing an AI agent"></div>
 </div></section>
 
-<section id="contact"><div class="wrap">
+<section id="contact" style="padding-top:0"><div class="wrap">
 <h2 class="rv">Have something to build?</h2>
 <a class="mail rv" href="mailto:r@rizzy.pro">r@rizzy.pro</a>
 <button class="copy rv" id="copy" type="button">Copy email address</button>
 </div></section>
 </main>
-<footer><div class="wrap"><span>&copy; 2026 Rizwan</span><span>Built by hand with HTML, CSS, JavaScript and canvas. No frameworks.</span></div></footer>
+<footer><div class="wrap"><span>&copy; 2026 Rizwan</span><span>Built by hand with HTML, CSS, JavaScript and WebGL. No frameworks.</span></div><b aria-hidden="true">Rizwan</b></footer>
 <script>
 (()=>{
-const rm=matchMedia('(prefers-reduced-motion:reduce)').matches;
-const $=id=>document.getElementById(id);
-const bar=$('bar');
-addEventListener('scroll',()=>{const h=document.documentElement;bar.style.transform='scaleX('+(scrollY/(h.scrollHeight-innerHeight||1))+')'},{passive:true});
+const $=id=>document.getElementById(id),rm=matchMedia('(prefers-reduced-motion:reduce)').matches,fine=matchMedia('(hover:hover)').matches;
+/* split headline into characters */
+document.querySelectorAll('[data-split]').forEach((el,k)=>{const s=el.textContent;el.textContent='';[...s].forEach((c,i)=>{const sp=document.createElement('span');sp.className='ch';sp.style.setProperty('--i',i+k*8);sp.textContent=c===' '?'\u00a0':c;el.appendChild(sp)})});
+/* loader */
+const cnt=$('cnt');let t0=performance.now(),done=false;
+function finish(){if(done)return;done=true;document.body.classList.add('go')}
+if(rm||!document.documentElement.classList.contains('js'))finish();
+else{const dur=2100;(function f(n){const p=Math.min((n-t0)/dur,1);cnt.textContent=Math.round(1-Math.pow(1-p,3)>=1?100:100*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(f);else setTimeout(finish,250)})(t0);setTimeout(finish,4500)}
+/* scroll bar, reveals, statement words, process line */
+const bar=$('bar'),stp=$('stp');
+stp.innerHTML=stp.textContent.split(' ').map(w=>'<span class="w">'+w+'</span>').join(' ');
+const W=[...stp.children];
+function sc(){const h=document.documentElement;bar.style.transform='scaleY('+(scrollY/(h.scrollHeight-innerHeight||1))+')';
+ const r=stp.getBoundingClientRect(),p=Math.min(Math.max((innerHeight*.85-r.top)/(r.height+innerHeight*.35),0),1);W.forEach((w,i)=>w.classList.toggle('on',rm||i<p*W.length))}
+addEventListener('scroll',sc,{passive:true});sc();
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
 document.querySelectorAll('.rv').forEach(el=>io.observe(el));
-
-/* hero flow field */
-const cv=$('field'),ctx=cv.getContext('2d');
-let W,H,D,P=[],mx=-999,my=-999,vis=true,t=0;
-function size(){D=Math.min(devicePixelRatio||1,2);const r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*D;cv.height=H*D;ctx.setTransform(D,0,0,D,0,0);ctx.fillStyle='#08090c';ctx.fillRect(0,0,W,H);
- P=Array.from({length:Math.min(1500,W*H/900|0)},()=>({x:Math.random()*W,y:Math.random()*H,a:Math.random()*90,w:Math.random()<.07}))}
-size();addEventListener('resize',size);
-const hero=$('hero');
-hero.addEventListener('pointermove',e=>{const r=cv.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top});
-hero.addEventListener('pointerleave',()=>{mx=my=-999});
-new IntersectionObserver(e=>{vis=e[0].isIntersecting;if(vis&&!rm)loop()}).observe(cv);
-function ang(x,y){const s=.0018;return(Math.sin(x*s*2.1+t)+Math.cos(y*s*2.6-t*.8)+Math.sin((x+y)*s*1.4+t*.5))*1.35}
-function step(){
- ctx.fillStyle='rgba(8,9,12,.075)';ctx.fillRect(0,0,W,H);
- for(const p of P){
-  let a=ang(p.x,p.y);const dx=p.x-mx,dy=p.y-my,d=Math.hypot(dx,dy);
-  if(d<200){a+=Math.atan2(dy,dx)*0+((1-d/200)*3.2)}
-  p.x+=Math.cos(a)*1.25;p.y+=Math.sin(a)*1.25;p.a++;
-  if(p.x<0||p.x>W||p.y<0||p.y>H||p.a>240){p.x=Math.random()*W;p.y=Math.random()*H;p.a=0}
-  const f=Math.min(p.a/30,1,(240-p.a)/30);
-  ctx.fillStyle=p.w?'rgba(255,178,107,'+.8*f+')':'rgba(155,240,255,'+.55*f+')';
-  ctx.fillRect(p.x,p.y,1.3,1.3)}
- t+=.0035}
-function loop(){if(!vis||rm)return;step();requestAnimationFrame(loop)}
-if(rm){for(let i=0;i<260;i++)step()}else loop();
-
-/* pinned platform sequence with text scramble */
-const items=[
-['Android','Native-feeling apps with smooth motion, offline support and a clean architecture, ready for Google Play.'],
-['iOS','Polished iPhone and iPad apps that follow platform conventions and feel right from the first tap.'],
-['Web','Responsive sites and full products, from motion-rich front ends to the APIs and databases behind them.'],
-['Games','Real-time games where frame rate, controls and feedback decide whether people keep playing.'],
-['AI agents','Agents connected to real tools, bound by clear rules, and tested like any other software.']];
-const pin=$('pin'),word=$('word'),desc=$('desc'),lis=[...$('rail').children];
-let cur=-1,tmr;
-const G='01<>/_#=+';
-function scramble(to){clearInterval(tmr);if(rm){word.textContent=to;return}
- let n=0;tmr=setInterval(()=>{n+=.7;word.textContent=[...to].map((c,i)=>i<n?c:(c===' '?' ':G[Math.random()*G.length|0])).join('');if(n>=to.length){clearInterval(tmr);word.textContent=to}},28)}
-function show(i){if(i===cur)return;cur=i;scramble(items[i][0]);desc.style.opacity=0;setTimeout(()=>{desc.textContent=items[i][1];desc.style.opacity=1},220);lis.forEach((l,k)=>l.classList.toggle('on',k===i))}
-function upd(){const r=pin.getBoundingClientRect(),p=Math.min(Math.max(-r.top/(r.height-innerHeight),0),.9999);show(Math.floor(p*items.length))}
-addEventListener('scroll',upd,{passive:true});upd();
-
+/* cursor, row preview, magnetic buttons */
+if(fine&&!rm){const c=$('c'),pv=$('pv'),ims=[...pv.children];let x=0,y=0,tx=-99,ty=-99,px=0,py=0,over=false;
+ addEventListener('pointermove',e=>{tx=e.clientX;ty=e.clientY;c.style.opacity=1});
+ (function f(){x+=(tx-x)*.2;y+=(ty-y)*.2;px+=(tx-px)*.1;py+=(ty-py)*.1;c.style.transform='translate('+x+'px,'+y+'px)';pv.style.transform='translate('+(px+30)+'px,'+(py-170)+'px) scale('+(over?1:.85)+')';requestAnimationFrame(f)})();
+ document.querySelectorAll('a,button').forEach(el=>{el.addEventListener('pointerenter',()=>c.classList.add('big'));el.addEventListener('pointerleave',()=>c.classList.remove('big'))});
+ [...$('rows').children].forEach((r,i)=>{r.addEventListener('pointerenter',()=>{over=true;pv.classList.add('on');ims.forEach((m,k)=>m.classList.toggle('on',k===i))});r.addEventListener('pointerleave',()=>{over=false;pv.classList.remove('on')})});
+ document.querySelectorAll('.btn').forEach(b=>{b.addEventListener('pointermove',e=>{const r=b.getBoundingClientRect();b.style.transform='translate('+((e.clientX-r.left-r.width/2)*.22)+'px,'+((e.clientY-r.top-r.height/2)*.3)+'px)'});b.addEventListener('pointerleave',()=>b.style.transform='')})}
+/* WebGL hero: domain-warped silk light, reacts to the pointer */
+const cv=$('gl'),gl=cv.getContext('webgl',{antialias:false,powerPreference:'low-power'});
+if(gl){
+ const vs='attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}';
+ const fs=`precision mediump float;uniform vec2 r;uniform float t;uniform vec2 m;
+ float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+ float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
+ float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<5;i++){v+=a*n(p);p=p*2.02+vec2(1.7,9.2);a*=.5;}return v;}
+ void main(){vec2 p=(gl_FragCoord.xy-.5*r)/r.y;vec2 mm=(m-.5*r)/r.y;float d=length(p-mm);
+  vec2 q=vec2(fbm(p*1.5+t*.05),fbm(p*1.5+vec2(5.2,1.3)-t*.04));
+  vec2 w=p+(q-.5)*1.15+normalize(p-mm+1e-4)*.14*exp(-d*3.);
+  float f=fbm(w*1.7+t*.06);float rd=pow(1.-abs(f*2.-1.),7.);
+  vec3 ice=vec3(.61,.94,1.),am=vec3(1.,.7,.42);
+  vec3 c=vec3(.028,.032,.043)+rd*mix(ice,am,smoothstep(.3,.9,q.x+p.x*.35))*.95;
+  c+=ice*.07*exp(-d*2.4);c*=.3+.7*smoothstep(1.4,.25,length(p*vec2(.75,1.)));
+  c+=(h(gl_FragCoord.xy+t)-.5)*.02;gl_FragColor=vec4(c,1.);}`;
+ const sh=(ty,s)=>{const o=gl.createShader(ty);gl.shaderSource(o,s);gl.compileShader(o);return o},pg=gl.createProgram();
+ gl.attachShader(pg,sh(gl.VERTEX_SHADER,vs));gl.attachShader(pg,sh(gl.FRAGMENT_SHADER,fs));gl.linkProgram(pg);
+ if(gl.getProgramParameter(pg,gl.LINK_STATUS)){
+  gl.useProgram(pg);const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+  const al=gl.getAttribLocation(pg,'a');gl.enableVertexAttribArray(al);gl.vertexAttribPointer(al,2,gl.FLOAT,false,0,0);
+  const ur=gl.getUniformLocation(pg,'r'),ut=gl.getUniformLocation(pg,'t'),um=gl.getUniformLocation(pg,'m');
+  let vis=true,mx=0,my=0,sx=0,sy=0,last=0;const S=.55;
+  function rs(){const r=cv.getBoundingClientRect();cv.width=Math.max(2,r.width*S);cv.height=Math.max(2,r.height*S);gl.viewport(0,0,cv.width,cv.height);mx=sx=cv.width*.7;my=sy=cv.height*.5}
+  rs();addEventListener('resize',rs);
+  $('hero').addEventListener('pointermove',e=>{const r=cv.getBoundingClientRect();mx=(e.clientX-r.left)*S;my=(r.bottom-e.clientY)*S});
+  new IntersectionObserver(e=>{vis=e[0].isIntersecting;if(vis&&!rm)requestAnimationFrame(fr)}).observe(cv);
+  function fr(n){if(!vis&&!rm)return;if(n-last>28||rm){last=n;sx+=(mx-sx)*.07;sy+=(my-sy)*.07;gl.uniform2f(ur,cv.width,cv.height);gl.uniform1f(ut,rm?40:n/1000);gl.uniform2f(um,sx,sy);gl.drawArrays(gl.TRIANGLES,0,3)}if(!rm)requestAnimationFrame(fr)}
+  requestAnimationFrame(fr);
+ }
+}
 /* agent terminal */
 const tm=$('term');
 const S=[['h','$ agent run --task "add offline mode to the Android app"'],['','Reading project structure...'],['','Drafting plan: cache layer, sync queue, tests'],['you','Rizwan: plan approved, keep the sync queue simple.'],['','Writing code and tests...'],['ok','Tests passing. Ready for review.'],['you','Rizwan: reviewed, merged, releasing.']];
@@ -190,10 +217,8 @@ else{let go=false;new IntersectionObserver((e,o)=>{if(e[0].isIntersecting&&!go){
   for(let i=1;i<=l[1].length;i++){d.innerHTML=esc(l[1].slice(0,i))+'<span class="cur"></span>';await new Promise(r=>setTimeout(r,l[0]==='h'||l[0]==='you'?24:12))}
   d.innerHTML=esc(l[1]);await new Promise(r=>setTimeout(r,420))}
   const c=document.createElement('div');c.innerHTML='<span class="cur"></span>';tm.appendChild(c)}}
-
 /* copy email */
-const cb=$('copy');
-cb.addEventListener('click',async()=>{try{await navigator.clipboard.writeText('r@rizzy.pro');cb.textContent='Copied r@rizzy.pro'}catch(e){cb.textContent='Select the address above and copy it'}setTimeout(()=>cb.textContent='Copy email address',2200)});
+const cb=$('copy');cb.addEventListener('click',async()=>{try{await navigator.clipboard.writeText('r@rizzy.pro');cb.textContent='Copied r@rizzy.pro'}catch(e){cb.textContent='Select the address above and copy it'}setTimeout(()=>cb.textContent='Copy email address',2200)});
 })();
 </script>
 </body>

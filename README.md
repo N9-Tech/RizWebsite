@@ -71,9 +71,10 @@ python3 -m http.server 8087
 # In another terminal, after installing Playwright and its Chromium/WebKit browsers:
 node tests/mobile-regression.cjs
 node tests/verify-browser.cjs
-# On Linux without a display, use: xvfb-run -a node tests/verify-browser.cjs
+node tests/background-effects.cjs
+# On Linux without a display, prefix the last two commands with: xvfb-run -a
 ```
 
-`mobile-regression.cjs` checks layout, navigation, layout stability and failure recovery. It uses a stub GPU for isolated scheduling/resource-cleanup checks. `verify-browser.cjs` uses real browser WebGL contexts in headed Chromium and headless WebKit and writes screenshots to `qa/`. It checks phone, landscape, tablet and desktop dimensions, menu behavior, reduced-motion changes, resize and context loss/restoration. These browser checks do not replace physical phone GPU testing.
+`mobile-regression.cjs` checks layout, navigation, layout stability and failure recovery. It uses a stub GPU for isolated scheduling/resource-cleanup checks. `verify-browser.cjs` uses real browser WebGL contexts in headed Chromium and headless WebKit and writes screenshots to `qa/`. It checks phone, landscape, tablet and desktop dimensions, menu behavior, reduced-motion changes, resize and context loss/restoration. `background-effects.cjs` also samples canvas pixels to reject blank or static effects even when WebGL setup and draw calls succeed. These browser checks do not replace physical phone GPU testing.
 
 See [the mobile audit](docs/MOBILE_AUDIT.md) for the baseline failures and repair details. `DESIGN_SPEC.md` is an earlier design brief, not a description of the current implementation.

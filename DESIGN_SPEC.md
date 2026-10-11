@@ -2,6 +2,8 @@
 ## Complete Design & Build Specification
 ### Version 1.0 — AI-Agent Implementation Ready
 
+> Historical design brief. The current Rizwan homepage uses different typography, copy and shader art. See `README.md` for the implemented architecture and `docs/MOBILE_AUDIT.md` for the mobile repair.
+
 > **Purpose:** Build a premium, cinematic personal website for `theace9`, a software engineer and AI-assisted developer. The site should feel comparable in production quality to the strongest MotionSites-style websites, while remaining original, technically credible, fast, responsive, accessible, and maintainable.
 
 ---
